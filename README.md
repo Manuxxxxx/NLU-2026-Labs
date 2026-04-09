@@ -79,7 +79,7 @@ The `LM` and `NLU` folders contain two sub-folders one for part A and the other 
 To deliver your project you have to:
 
 1. register for the exam on esse3.
-2. fill out this [Google form](https://forms.gle/CFxQ87ZLZVvc7cvs8).
+2. fill out this [Google form](https://forms.gle/6wvPsq49Xy85JLsA7).
 
 The project must be delivered **7 days before** the date of the exam session that you want to attend. You can do multiple submissions as we will check only the last one.
 
