@@ -1,0 +1,10 @@
+\section{Part 1.A -- GPT2 from Scratch}
+
+\subsection*{Introduction}
+In this exercise, I trained a GPT2-style language model from scratch on Penn TreeBank and improved the baseline step by step. The goal was to reduce perplexity by tuning the learning rate, increasing model capacity, and adding regularization only when it helped. Each modification was evaluated independently so that its effect on performance stayed clear.
+
+\subsection*{Implementation details}
+The baseline model used token embeddings, positional embeddings, masked self-attention, and a causal prediction head. On top of this, I tested one change at a time: larger hidden size, more heads, more layers, a larger feed-forward block, dropout in the embedding/attention/output path, and weight tying between the input embedding matrix and the output projection. Training was selected using validation perplexity, and the final comparison will report the test PPL of the best configuration.
+
+\subsection*{Results}
+The final report will include the baseline and the best-performing incremental variant, together with short remarks on the changes that improved or worsened perplexity.

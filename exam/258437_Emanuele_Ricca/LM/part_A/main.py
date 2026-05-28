@@ -30,11 +30,11 @@ def main():
     vocab_len = len(tokenizer)
 
     experiments = [
-        ExperimentConfig(name="weight tying + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, lr=0.005, weight_tying=True, save_best=True),
-        ExperimentConfig(name="emb dropout 0.2 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, emb_dropout=0.2, lr=0.005, save_best=True),
-        ExperimentConfig(name="attn dropout 0.2 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, attn_dropout=0.2, lr=0.005, save_best=True),
-        ExperimentConfig(name="ff dropout 0.2 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, dropout=0.2, lr=0.005, save_best=True),
-        ExperimentConfig(name="weight tying + emb dropout 0.1 + attn dropout 0.1 + ff dropout 0.1 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, emb_dropout=0.1, attn_dropout=0.1, dropout=0.1, weight_tying=True, lr=0.005, save_best=True),
+        ExperimentConfig(name="weight tying + more heads + more layers + bigger d_model (decreased lr, higher lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, lr=0.007, weight_tying=True, save_best=True),
+        ExperimentConfig(name="emb dropout 0.1 + more heads + more layers + bigger d_model (decreased lr, slightly higher lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, emb_dropout=0.1, lr=0.007, save_best=True),
+        ExperimentConfig(name="attn dropout 0.05 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, attn_dropout=0.05, lr=0.005, save_best=True),
+        ExperimentConfig(name="ff dropout 0.1 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, dropout=0.1, lr=0.005, save_best=True),
+        ExperimentConfig(name="proj dropout 0.05 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, proj_dropout=0.05, lr=0.005, save_best=True),
         # Baseline (no dropout, no weight tying)
         # ExperimentConfig(name="Baseline", d_model=20, n_heads=1, num_layers=1, ff_dim=20, lr=0.01, save_best=True),
 
