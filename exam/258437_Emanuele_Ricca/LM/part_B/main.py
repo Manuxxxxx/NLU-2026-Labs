@@ -1,0 +1,48 @@
+from pathlib import Path
+
+from functions import LoRAExperimentConfig, run_lora_experiment
+from utils import PennTreeBank, build_loaders, build_tokenizer, read_file
+
+
+def main():
+    device = "cuda:0"
+    base_dir = Path(__file__).resolve().parents[2]
+
+    train_raw = read_file(str(base_dir / "dataset/PennTreeBank/ptb.train.txt"))
+    dev_raw = read_file(str(base_dir / "dataset/PennTreeBank/ptb.valid.txt"))
+    test_raw = read_file(str(base_dir / "dataset/PennTreeBank/ptb.test.txt"))
+
+    train_dataset = PennTreeBank(train_raw)
+    dev_dataset = PennTreeBank(dev_raw)
+    test_dataset = PennTreeBank(test_raw)
+
+    tokenizer = build_tokenizer()
+    train_loader, dev_loader, test_loader = build_loaders(
+        train_dataset,
+        dev_dataset,
+        test_dataset,
+        tokenizer,
+        device,
+        train_batch_size=8,
+        eval_batch_size=16,
+    )
+
+    lora_experiments = [
+        # LoRAExperimentConfig(name="LoRA r=8 a=16", rank=8, alpha=16, lr=5e-4),
+        # LoRAExperimentConfig(name="LoRA r=4 a=16", rank=4, alpha=16, lr=5e-4),
+        # LoRAExperimentConfig(name="LoRA r=8 a=32", rank=8, alpha=32, lr=5e-4),
+        # LoRAExperimentConfig(name="LoRA r=6 a=32", rank=16, alpha=32, lr=3e-4),
+        LoRAExperimentConfig(name="LoRA r=4 a=8", rank=4, alpha=8, lr=5e-4),
+    ]
+
+    lora_results = []
+    for cfg in lora_experiments:
+        lora_results.append((cfg.name, *run_lora_experiment(cfg, train_loader, dev_loader, test_loader, device, tokenizer)))
+
+    print("\nSummary (name, best dev PPL, test PPL):")
+    for r in lora_results:
+        print(r)
+
+
+if __name__ == "__main__":
+    main()
