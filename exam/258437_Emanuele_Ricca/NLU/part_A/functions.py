@@ -103,10 +103,10 @@ class ExperimentConfig:
 	num_layers: int = 1
 	ff_dim: int = 20
 	lr: float = 1e-3
-	dropout: float = 0.1
+	dropout: float = 0.1 #using 0.1, as the reference, not sure why though
 	out_dropout: float = 0.0
-	n_epochs: int = 75
-	patience: int = 3
+	n_epochs: int = 100
+	patience: int = 5
 	warmup_epochs: int = 10
 	test_after_epoch: int = 5
 
