@@ -9,12 +9,21 @@ Probably due to the fact that i could not train bigger models the other methods 
 my hypothesis is that the model is still too small in order to benefit from such techniques, adding complexity but without much possible gain.
 In particular is rather clear that the model dont suffer much from overfitting so it doesnt require additional regularization.
 
+probably i should showcase dropout not really working even on different values.
+
+Still waiting on best config which will probably be biggest model to try to retrain on weight tying
+
 PART 1B
 The LoRA adapter converges really fast 3/4 epochs max and has from epoch 1 high performances compared to the previous PART 1A results.
 The fact that is adapting a much larger and stronger model simply outdoes every little model i trained earlier
 
 
 PART 2A
+The story for these experiments its pretty much the same as 1A, in this case i could test out a few different sizes of model.
+performances scales only in a significant way only based on model size. 
+Bigger model results in faster and better convergence, even though smaller model converges slower the results are still rather similar and really high still.
+This is especially easier to spot on the slot f1 graphs, which have a really clean curve compared to the more noisy intent accuracy.
+still the 2 metrics in all tests goes hand to hand in perfomances.
 
 
 PART 2B
