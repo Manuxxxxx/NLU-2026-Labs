@@ -1,20 +1,14 @@
-\documentclass[a4paper,10pt]{article}
+\documentclass[a4paper]{article}
 
-\usepackage[margin=2cm]{geometry}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage{hyperref}
-\usepackage{enumitem}
-\usepackage{titlesec}
+\usepackage{INTERSPEECH2021}
 
-\title{NLU Course Project -- First Draft Report}
-\author{Emanuele Ricca (258437)}
-\date{}
+% Put the lab number of the corresponding exercise
+\csname title\endcsname{NLU course project}
+\name{Emanuele Ricca (258437)}
 
-\setlist[itemize]{leftmargin=*,noitemsep,topsep=2pt}
-\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\address{
+  University of Trento}
+\email{emanuele.ricca@studenti.unitn.it}
 
 \begin{document}
 
@@ -25,10 +19,7 @@
 \input{sections/part2a}
 \input{sections/part2b}
 
-\section*{References}
-The final version of the report will include the bibliography for the methods and tools that were used.
-
-\bibliographystyle{plain}
-\bibliography{references}
+\bibliographystyle{IEEEtran}
+\bibliography{mybib}
 
 \end{document}
