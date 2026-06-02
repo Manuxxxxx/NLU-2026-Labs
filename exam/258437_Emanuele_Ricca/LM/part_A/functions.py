@@ -15,6 +15,7 @@ from model import GPT2_Mod
 
 
 def train_loop(data, optimizer, criterion, model):
+    # One full pass over the training set.
     model.train()
     loss_array = []
     number_of_tokens = []
@@ -24,6 +25,7 @@ def train_loop(data, optimizer, criterion, model):
     for i, (input_ids, labels, n_tokens) in enumerate(pbar):
         optimizer.zero_grad()
         output = model(input_ids)
+        # Cross-entropy over vocabulary.
         loss = criterion(output.permute(0, 2, 1), labels)
         loss_array.append(loss.item() * n_tokens)
         number_of_tokens.append(n_tokens)
@@ -37,6 +39,7 @@ def train_loop(data, optimizer, criterion, model):
 
 
 def eval_loop(data, eval_criterion, model):
+    # Evaluation without gradients.
     model.eval()
     loss_array = []
     number_of_tokens = []
@@ -50,11 +53,13 @@ def eval_loop(data, eval_criterion, model):
             number_of_tokens.append(n_tokens)
 
     loss_to_return = sum(loss_array) / sum(number_of_tokens)
+    # Perplexity from average loss.
     ppl = math.exp(loss_to_return)
     return ppl, loss_to_return
 
 
 def init_weights(mat):
+    # Match reference init for linear layers.
     for m in mat.modules():
         if type(m) in [nn.Linear]:
             torch.nn.init.uniform_(m.weight, -0.01, 0.01)
@@ -82,6 +87,7 @@ class ExperimentConfig:
 
 
 def _make_run_dir(name: str) -> Path:
+    # Unique run folder per experiment.
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name = name.replace(" ", "_")
     base_dir = Path(__file__).resolve().parents[2]
@@ -100,6 +106,7 @@ def run_experiment(
     tokenizer,
 ):
     print(f"\n=== {cfg.name} ===")
+    # Deterministic initialization for comparability.
     torch.manual_seed(42)
     model = GPT2_Mod(
         vocab_len,
@@ -138,6 +145,7 @@ def run_experiment(
             break
         writer.add_scalar("loss/train", loss.item(), epoch)
         writer.add_scalar("ppl/dev", ppl_dev, epoch)
+        # Track best dev perplexity.
         improved = ppl_dev < best_ppl
         if improved:
             best_ppl = ppl_dev
@@ -152,6 +160,7 @@ def run_experiment(
         if epoch + 1 > warmup_epochs and patience <= 0:
             break
 
+    # Evaluate best checkpoint on test.
     best_model.to(device)
     final_ppl, _ = eval_loop(test_loader, criterion_eval, best_model)
     if math.isfinite(final_ppl):

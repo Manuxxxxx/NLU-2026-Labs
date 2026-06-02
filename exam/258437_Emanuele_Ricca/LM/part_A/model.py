@@ -6,6 +6,7 @@ import torch.nn.functional as F
 class MultiHeadAttention_Mod(nn.Module):
 	def __init__(self, d_model, n_heads, attn_dropout=0.1, proj_dropout=0.1):
 		super().__init__()
+		# Split d_model across heads.
 		assert d_model % n_heads == 0
 		self.n_heads = n_heads
 		self.h_dim = d_model // n_heads
@@ -20,19 +21,23 @@ class MultiHeadAttention_Mod(nn.Module):
 
 	def forward(self, x, mask):
 		B, L, d_model = x.size()
+		# Project inputs to queries/keys/values.
 
 		q = self.w_q(x)
 		k = self.w_k(x)
 		v = self.w_v(x)
 
+		# (B, heads, L, head_dim)
 		q = q.view(B, L, self.n_heads, self.h_dim).transpose(1, 2)
 		k = k.view(B, L, self.n_heads, self.h_dim).transpose(1, 2)
 		v = v.view(B, L, self.n_heads, self.h_dim).transpose(1, 2)
 
 		similarity = q @ k.transpose(-2, -1)
+		# Scaled dot-product attention.
 		similarity = similarity * (1 / torch.sqrt(torch.tensor(self.h_dim, device=x.device)))
 		similarity = similarity.masked_fill(mask == 0, float("-inf"))
 
+		# Softmax over key sequence length.
 		attn = F.softmax(similarity, dim=-1)
 		attn = self.attn_dropout(attn)
 		y = attn @ v
@@ -51,6 +56,7 @@ class FeedForward_Mod(nn.Module):
 		self.dropout = nn.Dropout(dropout)
 
 	def forward(self, x):
+		# Position-wise MLP.
 		x = self.fc1(x)
 		x = self.act(x)
 		x = self.fc2(x)
@@ -67,6 +73,7 @@ class TransformerBlock_Mod(nn.Module):
 		self.ff = FeedForward_Mod(d_model, ff_dim, dropout)
 
 	def forward(self, x, mask):
+		# Pre-norm Transformer block.
 		x = x + self.attn(self.ln1(x), mask)
 		x = x + self.ff(self.ln2(x))
 		return x
@@ -103,21 +110,26 @@ class GPT2_Mod(nn.Module):
 		self.ln_f = nn.LayerNorm(d_model)
 		self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
 
+		# Optional weight tying between embedding and LM head.
 		if weight_tying:
 			self.lm_head.weight = self.token_embed.weight
 
+		# Causal mask (lower triangular) for autoregressive attention.
 		mask = torch.tril(torch.ones(pos_emb_size, pos_emb_size)).unsqueeze(0).unsqueeze(0)
 		self.register_buffer("mask", mask)
 
 	def forward(self, idx):
 		B, L = idx.shape
+		# Enforce max sequence length for positional embeddings.
 		assert L <= self.pos_emb_size
 		pos = torch.arange(L, device=idx.device)
+		# Token + position embeddings.
 		x = self.token_embed(idx) + self.pos_embed(pos)
 		x = self.emb_dropout(x)
 		mask = self.mask[:, :, :L, :L]
 		for block in self.blocks:
 			x = block(x, mask)
 		x = self.ln_f(x)
+		# Output logits for LM head.
 		logits = self.lm_head(x)
 		return logits

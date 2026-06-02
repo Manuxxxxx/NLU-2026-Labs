@@ -5,18 +5,22 @@ from utils import PennTreeBank, build_loaders, build_tokenizer, read_file
 
 
 def main():
+    # Entry point for LM experiments.
     device = "cuda:0"
+    # Resolve dataset paths relative to repo root.
     base_dir = Path(__file__).resolve().parents[2]
 
     train_raw = read_file(str(base_dir / "dataset/PennTreeBank/ptb.train.txt"))
     dev_raw = read_file(str(base_dir / "dataset/PennTreeBank/ptb.valid.txt"))
     test_raw = read_file(str(base_dir / "dataset/PennTreeBank/ptb.test.txt"))
 
+    # Wrap raw text into datasets for DataLoader.
     train_dataset = PennTreeBank(train_raw)
     dev_dataset = PennTreeBank(dev_raw)
     test_dataset = PennTreeBank(test_raw)
 
     tokenizer = build_tokenizer()
+    # Build tokenized loaders with separate train/eval batch sizes.
     train_loader, dev_loader, test_loader = build_loaders(
         train_dataset,
         dev_dataset,
@@ -29,6 +33,7 @@ def main():
 
     vocab_len = len(tokenizer)
 
+    # Define the experiment grid.
     experiments = [
         ExperimentConfig(name="wt + ff dropout 0.1 + more heads + moreke layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, dropout=0.1, lr=0.005, save_best=True, weight_tying=True, n_epochs=20),
         ExperimentConfig(name="wt + ff dropout 0.1 + more heads + moreke layers + bigger d_model_2 (decreased lr)", d_model=64, n_heads=2, num_layers=2, ff_dim=128, dropout=0.1, lr=0.005, save_best=True, weight_tying=True, n_epochs=20),
@@ -226,6 +231,7 @@ def main():
     ]
 
     results = []
+    # Run all configurations and collect metrics.
     for cfg in experiments:
         results.append((cfg.name, *run_experiment(cfg, train_loader, dev_loader, test_loader, vocab_len, device, tokenizer)))
 

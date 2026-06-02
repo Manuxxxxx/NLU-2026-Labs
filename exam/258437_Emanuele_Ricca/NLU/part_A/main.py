@@ -11,13 +11,16 @@ from utils import (
 
 
 def main():
+    # Entry point for NLU experiments (custom GPT2 model).
     device = "cuda:0"
     pad_token = 0
+    # Resolve dataset paths relative to repo root.
     base_dir = Path(__file__).resolve().parents[2]
 
     tmp_train_raw = load_data(str(base_dir / "dataset/ATIS/train.json"))
     test_raw = load_data(str(base_dir / "dataset/ATIS/test.json"))
 
+    # Stratified dev split with intent labels.
     train_raw, dev_raw, y_train, y_dev = create_dev_split(tmp_train_raw, portion=0.10, seed=42)
 
     y_test = [x["intent"] for x in test_raw]
@@ -27,12 +30,14 @@ def main():
     slots = set(sum([line["slots"].split() for line in corpus], []))
     intents = set([line["intent"] for line in corpus])
 
+    # Build vocabularies for words, slots, intents.
     lang = Lang(words, intents, slots, cutoff=0, pad_token=pad_token)
 
     train_dataset = IntentsAndSlots(train_raw, lang)
     dev_dataset = IntentsAndSlots(dev_raw, lang)
     test_dataset = IntentsAndSlots(test_raw, lang)
 
+    # Build padded loaders for the custom model.
     train_loader, dev_loader, test_loader = build_loaders(
         train_dataset, dev_dataset, test_dataset, pad_token=pad_token, device=device
     )
@@ -41,6 +46,7 @@ def main():
     slots_len = len(lang.id2slot)
     n_intents = len(lang.intent2id)
 
+    # Define the experiment grid.
     experiments = [
         # ExperimentConfig(name="Baseline", lr=1e-3),
         ExperimentConfig(name="Bigger d_model", d_model=64, ff_dim=128, lr=1e-3),
@@ -71,6 +77,7 @@ def main():
     ]
 
     results = []
+    # Run all configurations and collect metrics.
     for cfg in experiments:
         results.append(
             (

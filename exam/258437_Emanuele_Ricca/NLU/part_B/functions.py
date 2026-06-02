@@ -46,6 +46,7 @@ class ExperimentConfigGPT(ExperimentConfigBase):
 
 
 def train_loop_mtl(data, model, optimizer, criterion_slots, criterion_intents, device):
+	# One full pass over the training set.
 	model.train()
 	loss_array = []
 
@@ -56,6 +57,7 @@ def train_loop_mtl(data, model, optimizer, criterion_slots, criterion_intents, d
 		slot_labels = batch["slot_labels"].to(device)
 		intent_ids = batch["intent_ids"].to(device)
 
+		# Handle token_type_ids only for BERT-like models.
 		if isinstance(model, BertForIntentSlots):
 			slot_logits, intent_logits = model(
 				input_ids,
@@ -78,6 +80,7 @@ def train_loop_mtl(data, model, optimizer, criterion_slots, criterion_intents, d
 
 
 def eval_loop_mtl(data, model, criterion_slots, criterion_intents, lang, device):
+	# Evaluation without gradients.
 	model.eval()
 	loss_array = []
 
@@ -127,6 +130,7 @@ def eval_loop_mtl(data, model, criterion_slots, criterion_intents, lang, device)
 						continue
 					seen.add(word_id)
 					if token_idx < len(pred_ids):
+						# Keep first subword prediction per word.
 						pred_label = lang.id2slot.get(pred_ids[token_idx], "O")
 						pred_word_slots.append(pred_label)
 
@@ -145,6 +149,7 @@ def eval_loop_mtl(data, model, criterion_slots, criterion_intents, lang, device)
 
 
 def _make_run_dir(run_name: str) -> Path:
+	# Unique run folder per experiment.
 	timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 	safe_name = run_name.replace(" ", "_")
 	base_dir = Path(__file__).resolve().parents[2]
@@ -155,6 +160,7 @@ def _make_run_dir(run_name: str) -> Path:
 
 def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang, device):
 	print(f"\n=== {cfg.name} ===")
+	# Deterministic initialization for comparability.
 	torch.manual_seed(cfg.seed)
 
 	tokenizer, train_loader, dev_loader, test_loader = build_loaders(
@@ -164,6 +170,7 @@ def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang
 	n_intents = len(lang.intent2id)
 	n_slots = len(lang.slot2id)
 
+	# Select backbone based on config type.
 	if isinstance(cfg, ExperimentConfigBert):
 		model = BertForIntentSlots(cfg.model_name, n_intents, n_slots, dropout=cfg.dropout).to(device)
 	else:
@@ -200,6 +207,7 @@ def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang
 		writer.add_scalar("slot_f1/dev", dev_f1, epoch)
 		writer.add_scalar("intent_acc/dev", dev_intent_acc, epoch)
 
+		# Track best dev F1.
 		improved = dev_f1 > best_f1
 		if improved:
 			best_f1 = dev_f1
@@ -219,6 +227,7 @@ def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang
 		if epoch + 1 > warmup_epochs and patience <= 0:
 			break
 
+	# Load best checkpoint if saved.
 	if cfg.save_best and checkpoint_path.exists():
 		model.load_state_dict(torch.load(checkpoint_path))
 	results_test, intent_test, _ = eval_loop_mtl(

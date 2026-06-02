@@ -15,6 +15,7 @@ from model import GPT2_LoRA, LoRALinear
 
 
 def param_stats(model):
+    # Simple parameter count summary.
     total = sum(param.numel() for param in model.parameters())
     trainable = sum(
         param.numel() for param in model.parameters() if param.requires_grad
@@ -25,6 +26,7 @@ def param_stats(model):
 
 
 def make_lora_trainable(model: nn.Module):
+    # Freeze base weights, train only LoRA layers.
     for param in model.parameters():
         param.requires_grad = False
     for module in model.modules():
@@ -34,6 +36,7 @@ def make_lora_trainable(model: nn.Module):
 
 
 def train_loop(data, optimizer, model, tokenizer):
+    # One full pass over the training set.
     model.train()
     loss_array = []
     number_of_tokens = []
@@ -42,6 +45,7 @@ def train_loop(data, optimizer, model, tokenizer):
 
     for i, (input_ids, _, n_tokens) in enumerate(pbar):
         optimizer.zero_grad()
+        # Build labels and ignore padding positions.
         labels = input_ids.clone().detach()
         labels[labels == tokenizer.pad_token_id] = -100
         output = model(input_ids, labels=labels)
@@ -57,6 +61,7 @@ def train_loop(data, optimizer, model, tokenizer):
 
 
 def eval_loop(data, model, tokenizer):
+    # Evaluation without gradients.
     model.eval()
     loss_array = []
     number_of_tokens = []
@@ -64,6 +69,7 @@ def eval_loop(data, model, tokenizer):
         for input_ids, _, n_tokens in tqdm(
             data, desc="Evaluating:", unit="batch", total=len(data)
         ):
+            # Ignore padding positions in loss.
             labels = input_ids.clone().detach()
             labels[labels == tokenizer.pad_token_id] = -100
             output = model(input_ids, labels=labels)
@@ -71,6 +77,7 @@ def eval_loop(data, model, tokenizer):
             number_of_tokens.append(n_tokens)
 
     loss_to_return = sum(loss_array) / sum(number_of_tokens)
+    # Perplexity from average loss.
     ppl = math.exp(loss_to_return)
     return ppl, loss_to_return
 
@@ -88,6 +95,7 @@ class LoRAExperimentConfig:
 
 
 def _make_lora_run_dir(name: str) -> Path:
+    # Unique run folder per experiment.
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name = name.replace(" ", "_")
     base_dir = Path(__file__).resolve().parents[2]
@@ -101,12 +109,14 @@ def run_lora_experiment(
 ):
     print(f"\n=== {cfg.name} ===")
     torch.manual_seed(42)
+    # Load GPT-2 and inject LoRA adapters.
     model = GPT2_LoRA.from_pretrained(
         "openai-community/gpt2", alpha=cfg.alpha, rank=cfg.rank
     )
     model.to(device)
     make_lora_trainable(model)
 
+    # Optimize only trainable (LoRA) parameters.
     optimizer = optim.AdamW(
         (p for p in model.parameters() if p.requires_grad), lr=cfg.lr
     )
@@ -129,6 +139,7 @@ def run_lora_experiment(
             break
         writer.add_scalar("loss/train", loss.item(), epoch)
         writer.add_scalar("ppl/dev", ppl_dev, epoch)
+        # Track best dev perplexity.
         improved = ppl_dev < best_ppl
         if improved:
             best_ppl = ppl_dev

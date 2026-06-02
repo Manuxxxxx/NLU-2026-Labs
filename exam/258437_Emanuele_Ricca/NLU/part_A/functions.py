@@ -21,6 +21,7 @@ from conll import evaluate
 
 
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
+    # One full pass over the training set.
     model.train()
     loss_array = []
 
@@ -41,6 +42,7 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
 
 
 def eval_loop(data, criterion_slots, criterion_intents, model, lang):
+    # Evaluation without gradients.
     model.eval()
     loss_array = []
 
@@ -67,6 +69,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
 
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
+                # Exclude the final CLS token from slot decoding.
                 length = batch["slots_len"].tolist()[id_seq] - 1
 
                 utt_ids = batch["utterances"][id_seq][:length].tolist()
@@ -95,6 +98,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
 
 
 def init_weights(mat):
+    # Match reference init for linear layers.
     for m in mat.modules():
         if type(m) in [nn.Linear]:
             torch.nn.init.uniform_(m.weight, -0.01, 0.01)
@@ -120,6 +124,7 @@ class ExperimentConfig:
 
 
 def _make_run_dir(name: str) -> Path:
+    # Unique run folder per experiment.
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name = name.replace(" ", "_")
     base_dir = Path(__file__).resolve().parents[2]
@@ -140,6 +145,7 @@ def run_experiment(
     lang,
 ):
     print(f"\n=== {cfg.name} ===")
+    # Deterministic initialization for comparability.
     torch.manual_seed(42)
     model = GPT2_Mod(
         vocab_len,
@@ -193,6 +199,7 @@ def run_experiment(
         writer.add_scalar("loss/train", float(sum(loss) / max(len(loss), 1)), epoch)
         writer.add_scalar("slot_f1/dev", f1, epoch)
         writer.add_scalar("intent_acc/dev", intent_acc, epoch)
+        # Track best dev F1.
         improved = f1 > best_f1
         if improved:
             best_f1 = f1
@@ -208,6 +215,7 @@ def run_experiment(
             break
         print(f"Epoch {epoch}: Slot F1={f1:.4f} | Intent Acc={intent_acc:.4f}")
 
+    # Evaluate best checkpoint on test.
     best_model.to(device)
     results_test, intent_test, _ = eval_loop(
         test_loader, criterion_slots, criterion_intents, best_model, lang

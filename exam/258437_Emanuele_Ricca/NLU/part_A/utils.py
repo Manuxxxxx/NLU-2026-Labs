@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 
 
 def load_data(path):
+	# Load ATIS JSON split.
 	dataset = []
 	with open(path) as f:
 		dataset = json.loads(f.read())
@@ -17,6 +18,7 @@ def load_data(path):
 
 
 def create_dev_split(train_raw, portion=0.10, seed=42):
+	# Stratified split, keeping singletons in train.
 	intents = [x["intent"] for x in train_raw]
 	count_y = Counter(intents)
 
@@ -45,6 +47,7 @@ def create_dev_split(train_raw, portion=0.10, seed=42):
 
 class Lang:
 	def __init__(self, words, intents, slots, cutoff=0, cls=True, pad_token=0):
+		# Build vocabularies with optional CLS token.
 		self.pad_token = pad_token
 		self.word2id = self.w2id(words, cutoff=cutoff, unk=True, cls=cls)
 		self.slot2id = self.lab2id(slots, cls=cls)
@@ -54,6 +57,7 @@ class Lang:
 		self.id2intent = {v: k for k, v in self.intent2id.items()}
 
 	def w2id(self, elements, cutoff=None, unk=True, cls=True):
+		# Token vocabulary with PAD/UNK/CLS.
 		vocab = {"pad": self.pad_token}
 		if unk:
 			vocab["unk"] = len(vocab)
@@ -66,6 +70,7 @@ class Lang:
 		return vocab
 
 	def lab2id(self, elements, pad=True, cls=True):
+		# Label vocabulary for slots/intents.
 		vocab = {}
 		if pad:
 			vocab["pad"] = self.pad_token
@@ -78,6 +83,7 @@ class Lang:
 
 class IntentsAndSlots(data.Dataset):
 	def __init__(self, dataset, lang, unk="unk", cls="cls", add_cls=True):
+		# Precompute token/slot/intent ids.
 		self.utterances = []
 		self.intents = []
 		self.slots = []
@@ -108,6 +114,7 @@ class IntentsAndSlots(data.Dataset):
 		return [mapper[x] if x in mapper else mapper[self.unk] for x in data]
 
 	def mapping_seq(self, data, mapper):
+		# Map token sequences to ids with UNK/CLS.
 		res = []
 		for seq in data:
 			tmp_seq = []
@@ -123,6 +130,7 @@ class IntentsAndSlots(data.Dataset):
 
 
 def collate_fn(data, pad_token, device):
+	# Pad sequences and move tensors to device.
 	def merge(sequences):
 		lengths = [len(seq) for seq in sequences]
 		max_len = 1 if max(lengths) == 0 else max(lengths)
@@ -155,6 +163,7 @@ def collate_fn(data, pad_token, device):
 
 
 def build_loaders(train_dataset, dev_dataset, test_dataset, pad_token, device):
+	# Create padded loaders for train/dev/test.
 	train_loader = DataLoader(
 		train_dataset, batch_size=128, collate_fn=lambda x: collate_fn(x, pad_token, device), shuffle=True
 	)

@@ -6,11 +6,14 @@ from utils import load_data, create_dev_split
 
 
 def main():
+    # Entry point for NLU experiments with HF backbones.
     device = "cuda:0"
+    # Resolve dataset paths relative to repo root.
     base_dir = Path(__file__).resolve().parents[2]
 
     tmp_train_raw = load_data(str(base_dir / "dataset/ATIS/train.json"))
     test_raw = load_data(str(base_dir / "dataset/ATIS/test.json"))
+    # Stratified dev split with intent labels.
     train_raw, dev_raw, _, _ = create_dev_split(tmp_train_raw, portion=0.10, seed=42)
 
     words = sum([x["utterance"].split() for x in train_raw], [])
@@ -18,8 +21,10 @@ def main():
     slots = set(sum([line["slots"].split() for line in corpus], []))
     intents = set([line["intent"] for line in corpus])
 
+    # Build vocabularies for words, slots, intents.
     lang = Lang(words, intents, slots, cutoff=0, pad_token=0)
 
+    # Define the experiment grid.
     experiments = [
         # ExperimentConfigBert(
         #     name="BERT-base",
@@ -46,6 +51,7 @@ def main():
     ]
 
     results = []
+    # Run all configurations and collect metrics.
     for cfg in experiments:
         results.append(run_experiment(cfg, train_raw, dev_raw, test_raw, lang, device))
 

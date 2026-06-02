@@ -11,6 +11,7 @@ SLOT_IGNORE_INDEX = -100
 
 
 def load_data(path):
+	# Load ATIS JSON split.
 	dataset = []
 	with open(path) as f:
 		dataset = json.loads(f.read())
@@ -18,6 +19,7 @@ def load_data(path):
 
 
 def create_dev_split(train_raw, portion=0.10, seed=42):
+	# Stratified split, keeping singletons in train.
 	intents = [x["intent"] for x in train_raw]
 	count_y = Counter(intents)
 
@@ -46,6 +48,7 @@ def create_dev_split(train_raw, portion=0.10, seed=42):
 
 class Lang:
 	def __init__(self, words, intents, slots, cutoff=0, cls=True, pad_token=0):
+		# Build vocabularies with optional CLS token.
 		self.pad_token = pad_token
 		self.word2id = self.w2id(words, cutoff=cutoff, unk=True, cls=cls)
 		self.slot2id = self.lab2id(slots, cls=cls)
@@ -55,6 +58,7 @@ class Lang:
 		self.id2intent = {v: k for k, v in self.intent2id.items()}
 
 	def w2id(self, elements, cutoff=None, unk=True, cls=True):
+		# Token vocabulary with PAD/UNK/CLS.
 		vocab = {"pad": self.pad_token}
 		if unk:
 			vocab["unk"] = len(vocab)
@@ -67,6 +71,7 @@ class Lang:
 		return vocab
 
 	def lab2id(self, elements, pad=True, cls=True):
+		# Label vocabulary for slots/intents.
 		vocab = {}
 		if pad:
 			vocab["pad"] = self.pad_token
@@ -78,6 +83,7 @@ class Lang:
 
 
 def align_labels_with_tokens(word_ids, slot_labels: List[str], slot2id: Dict[str, int]) -> List[int]:
+	# Align word-level slot tags to subword tokenization.
 	label_ids = []
 	previous_word_id = None
 	for word_id in word_ids:
@@ -93,6 +99,7 @@ def align_labels_with_tokens(word_ids, slot_labels: List[str], slot2id: Dict[str
 
 class HFIntentSlotDataset(Dataset):
 	def __init__(self, raw_data, lang, tokenizer, max_length: int = 128):
+		# Store raw samples and tokenizer for on-the-fly encoding.
 		self.raw_data = raw_data
 		self.lang = lang
 		self.tokenizer = tokenizer
@@ -107,6 +114,7 @@ class HFIntentSlotDataset(Dataset):
 		slots = example["slots"].split()
 		intent_id = self.lang.intent2id[example["intent"]]
 
+		# Tokenize and keep word_ids for slot alignment.
 		encoding = self.tokenizer(
 			words,
 			is_split_into_words=True,
@@ -131,6 +139,7 @@ class HFIntentSlotDataset(Dataset):
 
 def make_collate_fn(tokenizer):
 	def collate(batch):
+		# Pad inputs and slot labels to max sequence length.
 		input_features = []
 		for item in batch:
 			features = {
@@ -165,6 +174,7 @@ def make_collate_fn(tokenizer):
 
 
 def build_tokenizer(model_name: str):
+	# GPT-2 needs prefix spaces for word alignment.
 	if "gpt2" in model_name.lower():
 		tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True, add_prefix_space=True)
 	else:
@@ -175,6 +185,7 @@ def build_tokenizer(model_name: str):
 
 
 def build_loaders(model_name: str, batch_size: int, max_length: int, train_raw, dev_raw, test_raw, lang):
+	# Build HF datasets and loaders.
 	tokenizer = build_tokenizer(model_name)
 	train_dataset = HFIntentSlotDataset(train_raw, lang, tokenizer, max_length=max_length)
 	dev_dataset = HFIntentSlotDataset(dev_raw, lang, tokenizer, max_length=max_length)
