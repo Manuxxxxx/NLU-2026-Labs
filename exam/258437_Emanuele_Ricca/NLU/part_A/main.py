@@ -49,31 +49,27 @@ def main():
     # Define the experiment grid.
     experiments = [
         # ExperimentConfig(name="Baseline", lr=1e-3),
-        ExperimentConfig(name="Bigger d_model", d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="Bigger d_model_2", d_model=128, ff_dim=192, lr=1e-3),
+        # ExperimentConfig(name="Bigger d_model", d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="Bigger d_model_2", d_model=128, ff_dim=192, lr=1e-3),
         
-        ExperimentConfig(name="More heads+Bigger d", n_heads=2, d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="More heads+bigger d_2", n_heads=2, d_model=128, ff_dim=192, lr=1e-3),
-        ExperimentConfig(name="More heads_2+ Bigger d", n_heads=4, d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="More heads_2+ Bigger d_2", n_heads=4, d_model=128, ff_dim=192, lr=1e-3),
+        # ExperimentConfig(name="More heads+Bigger d", n_heads=2, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More heads+bigger d_2", n_heads=2, d_model=128, ff_dim=192, lr=1e-3),
+        # ExperimentConfig(name="More heads_2+ Bigger d", n_heads=4, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More heads_2+ Bigger d_2", n_heads=4, d_model=128, ff_dim=192, lr=1e-3),
 
-        ExperimentConfig(name="More layers+Bigger d", num_layers=2, d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="More layers_2+Bigger d", num_layers=4, d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="More layers_2+Bigger d_2", num_layers=4, d_model=128, ff_dim=192, lr=1e-3),
+        # ExperimentConfig(name="More layers+Bigger d", num_layers=2, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More layers_2+Bigger d", num_layers=4, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More layers_2+Bigger d_2", num_layers=4, d_model=128, ff_dim=192, lr=1e-3),
         
-        ExperimentConfig(name="More layers+More heads+Bigger d", num_layers=2, n_heads=2, d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="More layers_2+More heads+Bigger d", num_layers=4, n_heads=2, d_model=64, ff_dim=128, lr=1e-3),
-        ExperimentConfig(name="More layers+More heads_2+Bigger d", num_layers=2, n_heads=4, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More layers+More heads+Bigger d", num_layers=2, n_heads=2, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More layers_2+More heads+Bigger d", num_layers=4, n_heads=2, d_model=64, ff_dim=128, lr=1e-3),
+        # ExperimentConfig(name="More layers+More heads_2+Bigger d", num_layers=2, n_heads=4, d_model=64, ff_dim=128, lr=1e-3),
         
         
-        ExperimentConfig(name="More layers_2+More heads_2+Bigger d_2", num_layers=4, n_heads=4, d_model=128, ff_dim=192, lr=1e-3),
-        # ExperimentConfig(
-        #     name="More layers+More heads+Bigger d", num_layers=2, n_heads=2, d_model=64, ff_dim=128, lr=1e-3
-        # ),
-        # ExperimentConfig(name="Out Dropout+Bigger d", d_model=64, ff_dim=128, out_dropout=0.8, lr=1e-3),
-        # ExperimentConfig(
-        #     name="More layers+More heads+Bigger d", num_layers=4, n_heads=2, d_model=64, ff_dim=128, lr=1e-3
-        # ),
+        # ExperimentConfig(name="More layers_2+More heads_2+Bigger d_2", num_layers=4, n_heads=4, d_model=128, ff_dim=192, lr=1e-3),
+        ExperimentConfig(name="Dropout0.1 + More layers_2+More heads+Bigger d", d_model=64, ff_dim=128, out_dropout=0.1, lr=1e-3),
+        ExperimentConfig(name="Dropout0.1 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.1, lr=1e-3),
+        ExperimentConfig(name="Dropout0.3 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.3, lr=5e-4),
     ]
 
     results = []

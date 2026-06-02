@@ -35,8 +35,6 @@ def main():
     lora_experiments = [
         # LoRAExperimentConfig(name="LoRA r=8 a=16", rank=8, alpha=16, lr=5e-4),
         # LoRAExperimentConfig(name="LoRA r=4 a=16", rank=4, alpha=16, lr=5e-4),
-        # LoRAExperimentConfig(name="LoRA r=8 a=32", rank=8, alpha=32, lr=5e-4),
-        # LoRAExperimentConfig(name="LoRA r=6 a=32", rank=16, alpha=32, lr=3e-4),
         LoRAExperimentConfig(name="LoRA r=4 a=8", rank=4, alpha=8, lr=5e-4),
     ]
 
