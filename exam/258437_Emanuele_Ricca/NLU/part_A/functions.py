@@ -24,7 +24,7 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
     model.train()
     loss_array = []
 
-    for batch in data:
+    for batch in tqdm(data, desc="Training:", unit="batch", total=len(data)):
         optimizer.zero_grad()
 
         slots, intent = model(batch["utterances"], batch["slots_len"])
@@ -50,7 +50,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     ref_slots = []
     hyp_slots = []
     with torch.no_grad():
-        for batch in data:
+        for batch in tqdm(data, desc="Evaluating:", unit="batch", total=len(data)):
             slots, intents = model(batch["utterances"], batch["slots_len"])
             slots = slots.permute(0, 2, 1)
             loss_intent = criterion_intents(intents, batch["intents"])
@@ -116,6 +116,7 @@ class ExperimentConfig:
     patience: int = 5
     warmup_epochs: int = 10
     test_after_epoch: int = 5
+    save_best: bool = True
 
 
 def _make_run_dir(name: str) -> Path:
@@ -196,7 +197,8 @@ def run_experiment(
         if improved:
             best_f1 = f1
             best_model = copy.deepcopy(model).to("cpu")
-            torch.save(best_model.state_dict(), checkpoint_path)
+            if cfg.save_best:
+                torch.save(best_model.state_dict(), checkpoint_path)
             if epoch + 1 > warmup_epochs:
                 patience = cfg.patience
         else:

@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import classification_report
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 from model import BertForIntentSlots, GPT2ForIntentSlots
 from utils import SLOT_IGNORE_INDEX, build_loaders
@@ -31,6 +32,7 @@ class ExperimentConfigBase:
 	dropout: float = 0.1
 	weight_decay: float = 0.01
 	seed: int = 42
+	save_best: bool = True
 
 
 @dataclass
@@ -47,7 +49,7 @@ def train_loop_mtl(data, model, optimizer, criterion_slots, criterion_intents, d
 	model.train()
 	loss_array = []
 
-	for batch in data:
+	for batch in tqdm(data, desc="Training:", unit="batch", total=len(data)):
 		optimizer.zero_grad()
 		input_ids = batch["input_ids"].to(device)
 		attention_mask = batch["attention_mask"].to(device)
@@ -85,7 +87,7 @@ def eval_loop_mtl(data, model, criterion_slots, criterion_intents, lang, device)
 	hyp_slots = []
 
 	with torch.no_grad():
-		for batch in data:
+		for batch in tqdm(data, desc="Evaluating:", unit="batch", total=len(data)):
 			input_ids = batch["input_ids"].to(device)
 			attention_mask = batch["attention_mask"].to(device)
 			slot_labels = batch["slot_labels"].to(device)
@@ -182,7 +184,7 @@ def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang
 	patience = cfg.patience
 	warmup_epochs = cfg.warmup_epochs
 
-	for epoch in range(cfg.n_epochs):
+	for epoch in tqdm(range(cfg.n_epochs), desc="Epochs"):
 		loss = train_loop_mtl(train_loader, model, optimizer, criterion_slots, criterion_intents, device)
 		results_dev, intent_res, loss_dev = eval_loop_mtl(
 			dev_loader, model, criterion_slots, criterion_intents, lang, device
@@ -201,7 +203,8 @@ def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang
 		improved = dev_f1 > best_f1
 		if improved:
 			best_f1 = dev_f1
-			torch.save(model.state_dict(), checkpoint_path)
+			if cfg.save_best:
+				torch.save(model.state_dict(), checkpoint_path)
 			if epoch + 1 > warmup_epochs:
 				patience = cfg.patience
 		else:
@@ -216,7 +219,8 @@ def run_experiment(cfg: ExperimentConfigBase, train_raw, dev_raw, test_raw, lang
 		if epoch + 1 > warmup_epochs and patience <= 0:
 			break
 
-	model.load_state_dict(torch.load(checkpoint_path))
+	if cfg.save_best and checkpoint_path.exists():
+		model.load_state_dict(torch.load(checkpoint_path))
 	results_test, intent_test, _ = eval_loop_mtl(
 		test_loader, model, criterion_slots, criterion_intents, lang, device
 	)

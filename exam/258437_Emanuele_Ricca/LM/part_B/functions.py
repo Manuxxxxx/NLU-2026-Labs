@@ -84,6 +84,7 @@ class LoRAExperimentConfig:
     n_epochs: int = 50
     patience: int = 5
     warmup_epochs: int = 10
+    save_best: bool = True
 
 
 def _make_lora_run_dir(name: str) -> Path:
@@ -132,7 +133,8 @@ def run_lora_experiment(
         if improved:
             best_ppl = ppl_dev
             best_model = copy.deepcopy(model).to("cpu")
-            torch.save(best_model.state_dict(), checkpoint_path)
+            if cfg.save_best:
+                torch.save(best_model.state_dict(), checkpoint_path)
             if epoch + 1 > warmup_epochs:
                 patience = cfg.patience
         else:

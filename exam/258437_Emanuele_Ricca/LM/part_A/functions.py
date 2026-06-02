@@ -78,7 +78,7 @@ class ExperimentConfig:
     n_epochs: int = 10
     patience: int = 3
     warmup_epochs: int = 3
-    save_best: bool = False
+    save_best: bool = True
 
 
 def _make_run_dir(name: str) -> Path:
