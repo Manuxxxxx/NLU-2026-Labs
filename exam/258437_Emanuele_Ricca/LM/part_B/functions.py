@@ -88,9 +88,9 @@ class LoRAExperimentConfig:
     rank: int = 8
     alpha: int = 16
     lr: float = 5e-4
-    n_epochs: int = 50
-    patience: int = 5
-    warmup_epochs: int = 10
+    n_epochs: int = 20
+    patience: int = 3
+    warmup_epochs: int = 3
     save_best: bool = True
 
 
