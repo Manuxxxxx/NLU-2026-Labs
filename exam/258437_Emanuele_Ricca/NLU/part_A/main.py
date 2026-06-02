@@ -67,9 +67,11 @@ def main():
         
         
         # ExperimentConfig(name="More layers_2+More heads_2+Bigger d_2", num_layers=4, n_heads=4, d_model=128, ff_dim=192, lr=1e-3),
-        ExperimentConfig(name="Dropout0.1 + More layers_2+More heads+Bigger d", d_model=64, ff_dim=128, out_dropout=0.1, lr=1e-3),
-        ExperimentConfig(name="Dropout0.1 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.1, lr=1e-3),
-        ExperimentConfig(name="Dropout0.3 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.3, lr=5e-4),
+        # ExperimentConfig(name="Dropout0.1 + More layers_2+More heads+Bigger d", d_model=64, ff_dim=128, out_dropout=0.1, lr=1e-3),
+        # ExperimentConfig(name="Dropout0.1 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.1, lr=1e-3),
+        # ExperimentConfig(name="Dropout0.3 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.3, lr=1e-3),
+        ExperimentConfig(name="Dropout0.05 + More layers_2+More heads+Bigger d_2", num_layers=4, n_heads=2, d_model=128, ff_dim=192, out_dropout=0.05, lr=1e-3),
+        
     ]
 
     results = []
