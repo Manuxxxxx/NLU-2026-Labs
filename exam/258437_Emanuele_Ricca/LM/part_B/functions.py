@@ -1,7 +1,7 @@
 import copy
 import json
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 

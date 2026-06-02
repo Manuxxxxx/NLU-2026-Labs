@@ -1,6 +1,6 @@
 import copy
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 

@@ -30,8 +30,11 @@ def main():
     vocab_len = len(tokenizer)
 
     experiments = [
+        ExperimentConfig(name="wt + ff dropout 0.1 + more heads + moreke layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, dropout=0.1, lr=0.005, save_best=True, weight_tying=True, n_epochs=20),
+        ExperimentConfig(name="wt + ff dropout 0.1 + more heads + moreke layers + bigger d_model_2 (decreased lr)", d_model=64, n_heads=2, num_layers=2, ff_dim=128, dropout=0.1, lr=0.005, save_best=True, weight_tying=True, n_epochs=20),
+        
         # ExperimentConfig(name="weight tying + more heads + more layers + bigger d_model (decreased lr, higher lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, lr=0.007, weight_tying=True, save_best=True),
-        ExperimentConfig(name="emb dropout 0.05 + more heads + more layers + bigger d_model (decreased lr, slightly higher lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, emb_dropout=0.05, lr=0.007, save_best=False),
+        # ExperimentConfig(name="emb dropout 0.05 + more heads + more layers + bigger d_model (decreased lr, slightly higher lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, emb_dropout=0.05, lr=0.005, save_best=False, n_epochs=20),
         # ExperimentConfig(name="attn dropout 0.05 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, attn_dropout=0.05, lr=0.005, save_best=True),
         # ExperimentConfig(name="ff dropout 0.1 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, dropout=0.1, lr=0.005, save_best=True),
         # ExperimentConfig(name="proj dropout 0.05 + more heads + more layers + bigger d_model (decreased lr)", d_model=32, n_heads=2, num_layers=2, ff_dim=64, proj_dropout=0.05, lr=0.005, save_best=True),

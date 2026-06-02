@@ -21,19 +21,19 @@ def main():
     lang = Lang(words, intents, slots, cutoff=0, pad_token=0)
 
     experiments = [
-        ExperimentConfigBert(
-            name="BERT-base",
-            model_name="bert-base-uncased",
-            lr=2e-5,
-            batch_size=16,
-            max_length=128,
-            n_epochs=5,
-            patience=5,
-            warmup_epochs=10,
-            dropout=0.1,
-        ),
+        # ExperimentConfigBert(
+        #     name="BERT-base",
+        #     model_name="bert-base-uncased",
+        #     lr=2e-5,
+        #     batch_size=16,
+        #     max_length=128,
+        #     n_epochs=5,
+        #     patience=5,
+        #     warmup_epochs=10,
+        #     dropout=0.1,
+        # ),
         ExperimentConfigGPT(
-            name="GPT2-small",
+            name="GPT2",
             model_name="openai-community/gpt2",
             lr=5e-5,
             batch_size=16,
