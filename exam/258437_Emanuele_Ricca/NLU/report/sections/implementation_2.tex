@@ -1,10 +1,14 @@
 \section{Implementation Details}
 \label{sec:implementation_2}
 
-The multi-task framework routes a shared contextual representation matrix $H \in \mathbb{R}^{B \times L \times d_{\text{model}}}$ into independent task classification heads. Token sequence tagging projects individual token hidden states $H_i$ across slot vocabulary dimensions. Sentence intent classification pooling depends on the underlying backbone: the custom model and BERT extract features from the primary classification token ($\mathbf{h}_{\text{[CLS]}} = H[:, 0]$) \cite{devlin2019bert}, while the autoregressive GPT2 indexes the final non-padded sequence token using active attention mask boundaries ($\mathbf{h}_{\text{final}} = H[B, \sum(\text{mask})-1]$) to respect causal constraints. 
+The multi-task architecture uses a shared contextual representation matrix $H \in \mathbb{R}^{B \times L \times d_{\text{model}}}$ that is processed by two task-specific prediction heads. For slot filling, each token representation $H_i$ is projected onto the slot label space. For intent classification, a sentence-level representation is extracted from the backbone model and passed to a dedicated classifier.
 
-The training objective optimizes an unweighted joint cross-entropy loss function without manual balancing scaling coefficients:
+The representation used for intent classification depends on the underlying architecture. For the custom model and BERT, the hidden state associated with the \texttt{[CLS]} token ($\mathbf{h}_{\text{[CLS]}} = H[:,0]$) is used as the sentence representation \cite{devlin2019bert}. For GPT2, which does not contain a classification token and operates autoregressively, the hidden state of the final non-padding token is selected using the attention mask ($\mathbf{h}_{\text{final}} = H[B,\sum(\text{mask})-1]$).
+
+Training is performed using a joint objective consisting of the sum of the intent classification loss and slot filling loss:
+
 \begin{equation}
-    \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{intent}} + \mathcal{L}_{\text{slot}}
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{intent}} + \mathcal{L}_{\text{slot}}
 \end{equation}
-To handle sub-tokenization discrepancies introduced by WordPiece and Byte-Pair Encoding, we implement an index masking schema. Ground-truth slot tags are mapped exclusively to the first sub-token of each word. All subsequent child sub-tokens and padding steps are assigned an active ignore index (\texttt{SLOT\_IGNORE\_INDEX} $\to -100$), skipping loss and gradient computations. All variants are optimized via AdamW \cite{loshchilov2017decoupled} with linear learning rate warmup and an early-stopping patience threshold.
+
+To address the sub-tokenization introduced by WordPiece and Byte-Pair Encoding tokenizers, slot labels are assigned only to the first sub-token of each word. All remaining sub-tokens and padding positions are assigned the ignore index (\texttt{SLOT\_IGNORE\_INDEX} = -100), preventing them from contributing to the loss or gradient updates. All models are optimized using AdamW \cite{loshchilov2017decoupled} with linear learning-rate warmup and early stopping.

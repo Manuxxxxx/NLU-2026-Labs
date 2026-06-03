@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex report"] 0 "report.aux" "report.bbl" "report" 0 -1
+["bibtex report"] 1780512783.18302 "report.aux" "report.bbl" "report" 1780512784.33601 0
   "./mybib.bib" 1780507915.89099 2198 911a3e45fb9d2c89fb8d7a4eb55b82f2 ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1775415801 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "report.aux" 1780511807.89152 2715 116d8b6635c6729a1af23a87fbc4a341 "pdflatex"
+  "report.aux" 1780512784.16389 2485 8571e32d59477d399abb84ea82a808e1 "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
   (rewritten before read)
-["pdflatex"] 1780511806.81544 "/home/emanuele/Documenti/Magistrale/NLU-2026-Labs/exam/258437_Emanuele_Ricca/NLU/report/report.tex" "report.pdf" "report" 1780511808.08837 2
+["pdflatex"] 1780512783.21297 "/home/emanuele/Documenti/Magistrale/NLU-2026-Labs/exam/258437_Emanuele_Ricca/NLU/report/report.tex" "report.pdf" "report" 1780512784.33638 0
   "/home/emanuele/Documenti/Magistrale/NLU-2026-Labs/exam/258437_Emanuele_Ricca/NLU/report/report.tex" 1780507415.86795 732 af6b11adb8041eb35be0b1b72d5c8adc ""
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1775415801 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1775415801 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -127,12 +127,20 @@
   "images/loss_dev_2a_2b.svg" 1780511095.04351 45223 d16c8078589bd6c499760c8a6a92ab01 ""
   "images/loss_train_2a_2b.svg" 1780511095.04687 92827 184740e11bb239db858aef02435b65da ""
   "images/slot_f1_test_2a_2b.svg" 1780511095.05333 77555 05069fdbbd129ed411f0d28175abdb4f ""
-  "report.aux" 1780511807.89152 2715 116d8b6635c6729a1af23a87fbc4a341 "pdflatex"
-  "report.bbl" 1780511683.88541 604 43a86339ba28b0cd25ae2bdcf42c646a "bibtex report"
+  "report.aux" 1780512784.16389 2485 8571e32d59477d399abb84ea82a808e1 "pdflatex"
+  "report.bbl" 1780512783.20686 409 ce11beea9aa8fd4421edd92ccc518119 "bibtex report"
   "report.tex" 1780507415.86795 732 af6b11adb8041eb35be0b1b72d5c8adc ""
-  "sections/implementation_2.tex" 1780509091.41329 1535 a2a826700c7ba274302b3fff944e4d31 ""
-  "sections/introduction_2.tex" 1780509085.72131 1198 c2ff5e3896327148e6432098f31ddf79 ""
-  "sections/results_2.tex" 1780511805.09592 7460 b6935d7376a78bd0d61dfbd6711aeba6 ""
+  "sections/implementation_2.tex" 1780512700.53521 1692 20f1ed8c8477dd8ef28ef9e1f95e8dc9 ""
+  "sections/introduction_2.tex" 1780512694.65781 1204 f50f2addc8e1dfdc6ec2d646ab09ec78 ""
+  "sections/results_2.tex" 1780512781.12877 7005 127345eb3d65d1eee5900496f8341818 ""
+  "svg-inkscape/intent_acc_test_2a_2b_svg-tex.pdf" 1780511823.09875 96137 cb1691c65e965b1c083b64b76f4fd7aa ""
+  "svg-inkscape/intent_acc_test_2a_2b_svg-tex.pdf_tex" 1780511823.10094 2114 b7c09bcf38edfc0e81ac91eaebd565a3 ""
+  "svg-inkscape/loss_dev_2a_2b_svg-tex.pdf" 1780511825.63806 43385 884afe8e0af09ff5f8d3cf3ce51acf2e ""
+  "svg-inkscape/loss_dev_2a_2b_svg-tex.pdf_tex" 1780511825.6396 2100 b6f24075ee9e812a8abbf717df151a1d ""
+  "svg-inkscape/loss_train_2a_2b_svg-tex.pdf" 1780511824.83817 101654 d153247b98d1d28fb6ae3d987efcf27d ""
+  "svg-inkscape/loss_train_2a_2b_svg-tex.pdf_tex" 1780511824.83927 2104 9d929865b379e9284bd8b81284a5dd13 ""
+  "svg-inkscape/slot_f1_test_2a_2b_svg-tex.pdf" 1780511823.80623 92394 beefcf96a245243a977c2081d52ff4ec ""
+  "svg-inkscape/slot_f1_test_2a_2b_svg-tex.pdf_tex" 1780511823.81026 2108 76839d65db67ea8dac9d1413ac805fb5 ""
   (generated)
   "report.aux"
   "report.log"

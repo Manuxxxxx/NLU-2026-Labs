@@ -1,28 +1,37 @@
 \section{Results and Evaluation}
-Performance is evaluated via cross-entropy loss translated into Perplexity ($\text{PPL} = \exp(\text{loss})$). Table~\ref{tab:1a_results} logs the metrics gathered across the design phases of the custom scratch model, while Table~\ref{tab:1b_results} breaks down the performance profiles of the manual LoRA runs.
+
+Performance is evaluated using cross-entropy loss converted to Perplexity ($\text{PPL}=\exp(\text{loss})$). Table~\ref{tab:1a_results} summarizes the results obtained through the incremental modifications applied to the GPT2-style model trained from scratch, while Table~\ref{tab:1b_results} reports the results achieved with the manually implemented LoRA adapters.
 
 \begin{table}[H]
 \centering
 \small
 \caption{Incremental optimization perplexities for Part 1.A (From Scratch).}
 \label{tab:1a_results}
+
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcc}
 \hline
-\textbf{Incremental Modification Variant} & \textbf{Dev PPL} & \textbf{Test PPL} \\ \hline
+\textbf{Incremental Modification Variant} &
+\textbf{Dev PPL} &
+\textbf{Test PPL} \\
+\hline
+
 Baseline Layout ($lr=0.01$) & 56.68 & 49.51 \\
-+ Bigger $d_{\text{model}}$ (32, $ff_{\text{dim}}=64$) & 46.68 & 41.51 \\
-+ More Layers ($num_{\text{layers}}=2$) & 46.75 & 41.45 \\
-+ More Heads ($n_{\text{heads}}=2$) & 46.18 & 40.77 \\
-+ Embedding Dropout (0.2) & 48.65 & 43.02 \\
-+ Embedding Dropout (0.05) & 46.52 & 41.25 \\
-+ Attention Dropout (0.05)* & 46.56 & N/A \\
-+ Feed-Forward Dropout (0.1) & 46.17 & 40.96 \\
-+ Projection Dropout (0.05) & 46.91 & 41.57 \\
-+ Weight Tying (WT, $lr=0.01$) & 54.45 & 48.10 \\
-+ WT + FF Drop 0.1 ($lr=0.005$) & 50.53 & 44.77 \\
-\textbf{+ WT + FF Drop 0.1 (Scaled Up)} & \textbf{43.47} & \textbf{38.81} \\ \hline
-\end{tabular}%
+Bigger $d_{\text{model}}$ (32, $ff_{\text{dim}}=64$) & 46.68 & 41.51 \\
+More Layers ($num_{\text{layers}}=2$) & 46.75 & 41.45 \\
+More Heads ($n_{\text{heads}}=2$) & 46.18 & 40.77 \\
+Embedding Dropout (0.2) & 48.65 & 43.02 \\
+Embedding Dropout (0.05) & 46.52 & 41.25 \\
+Attention Dropout (0.05) & 46.56 & N/A \\
+Feed-Forward Dropout (0.1) & 46.17 & 40.96 \\
+Projection Dropout (0.05) & 46.91 & 41.57 \\
+Weight Tying ($lr=0.01$) & 54.45 & 48.10 \\
+WT + FF Drop 0.1 ($lr=0.005$) & 50.53 & 44.77 \\
+\textbf{WT + FF Drop 0.1 (Scaled Up)} &
+\textbf{43.47} &
+\textbf{38.81} \\
+\hline
+\end{tabular}
 }
 \end{table}
 
@@ -31,40 +40,57 @@ Baseline Layout ($lr=0.01$) & 56.68 & 49.51 \\
 \small
 \caption{LoRA fine-tuning parameters and perplexity metrics for Part 1.B.}
 \label{tab:1b_results}
+
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \hline
-\textbf{Configuration Profile} & \textbf{Rank} & \textbf{Alpha} & \textbf{Dev PPL} & \textbf{Test PPL} \\ \hline
-LoRA Run 1* & 4 & 16 & 24.29 & N/A \\
-\textbf{LoRA Run 2 (Best)} & \textbf{4} & \textbf{8} & \textbf{23.24} & \textbf{20.99} \\ \hline
-\end{tabular}%
+\textbf{Configuration Profile} &
+\textbf{Rank} &
+\textbf{Alpha} &
+\textbf{Dev PPL} &
+\textbf{Test PPL} \\
+\hline
+
+LoRA Run 1 & 4 & 16 & 24.29 & N/A \\
+\textbf{LoRA Run 2 (Best)} &
+\textbf{4} &
+\textbf{8} &
+\textbf{23.24} &
+\textbf{20.99} \\
+\hline
+\end{tabular}
 }
 \end{table}
+The results show clear differences between training a language model from scratch and adapting a pre-trained model. For the scratch-trained architecture, increasing $d_{\text{model}}$ from 20 to 32 produced the largest single improvement in perplexity. Additional increases in depth and attention heads provided smaller but consistent gains. Since the Penn TreeBank corpus is relatively small, strong regularization was not necessary: larger embedding and projection dropout values increased perplexity, while a moderate feed-forward dropout of 0.1 produced the best regularization effect.
 
-Empirical metrics indicate highly divergent optimization curves between the two approaches. For the models trained from scratch, expanding $d_{\text{model}}$ from 20 to 32 delivered the most significant drop in perplexity. Due to the compact nature of the corpus, severe overfitting was absent, rendering heavy embedding and projection dropouts \cite{srivastava2014dropout} counterproductive; only a mild feed-forward dropout at 0.1 provided structural regularization. Weight tying \cite{press2016using} initially harmed perplexity due to representational bottlenecks on an narrow parameter budget, but its reduction in parameter volume enabled scaling the network dimensions safely up to $d_{\text{model}}=64$ and $ff_{\text{dim}}=128$, resulting in a peak test PPL of 38.81.
+Weight tying \cite{press2016using} initially increased perplexity when applied to smaller model configurations. However, the reduction in parameter count made it possible to scale the model further while maintaining stable training. Combining weight tying, feed-forward dropout, and a larger architecture resulted in the best scratch-trained configuration, achieving a test perplexity of 38.81.
 
-Conversely, the manual LoRA framework completely bypasses these initialization hurdles by adapting a powerful pre-trained representation base \cite{radford2019language}. This strategy securely met all performance objectives, achieving a vastly superior test perplexity of 20.99 \cite{hu2021lora}.
+The manually implemented LoRA framework achieved substantially better results than all scratch-trained variants. By adapting a pre-trained GPT2 backbone \cite{radford2019language} through a small number of trainable parameters, the model reached a test perplexity of 20.99 while satisfying all project requirements \cite{hu2021lora}.
 
-To visually analyze these structural differences, Figure~\ref{fig:unified_curves} presents the synchronized TensorBoard trajectories comparing the training and validation characteristics of both implementations.
+To further compare the optimization behaviour of the two approaches, Figure~\ref{fig:unified_curves} presents the training loss and development perplexity trajectories collected during training.
 
 \begin{figure}[H]
 \centering
 \begin{subfigure}{\columnwidth}
-  \centering
-  \includesvg[width=0.88\columnwidth]{images/loss_train_1a_1b}
-  \caption{Unified Training Loss Track}
-  \label{fig:loss_train}
-\end{subfigure} \\
+\centering
+\includesvg[width=0.88\columnwidth]{images/loss_train_1a_1b}
+\caption{Unified Training Loss Track}
+\label{fig:loss_train}
+\end{subfigure}
+
 \vspace{2mm}
+
 \begin{subfigure}{\columnwidth}
-  \centering
-  \includesvg[width=0.88\columnwidth]{images/ppl_dev_1a_1b}
-  \caption{Development Perplexity Profile}
-  \label{fig:ppl_dev}
-\end{subfigure} \\
-\vspace{2mm}
+\centering
+\includesvg[width=0.88\columnwidth]{images/ppl_dev_1a_1b}
+\caption{Development Perplexity Profile}
+\label{fig:ppl_dev}
+\end{subfigure}
+
+\caption{Comparison of training loss and development perplexity between the best scratch-trained models and the LoRA-based fine-tuning approach.}
+\label{fig:unified_curves}
 \end{figure}
 
-As mapped in Figures \ref{fig:loss_train} and \ref{fig:ppl_dev}, the models built from scratch demonstrate a classical steep optimization curve. They begin with very high training loss and validation perplexity metrics, requiring a longer sequence of epochs to map structural English relationships. In comparison, the LoRA runs demonstrate an exceptionally flat convergence profile. Starting instantly at Epoch 1 with a development perplexity near 26, the adapters converge and plateau within 3 to 4 epochs due to the foundational features embedded in the pre-trained backbone. 
+As shown in Figures~\ref{fig:loss_train} and~\ref{fig:ppl_dev}, the models trained from scratch begin with high training loss and development perplexity values and require several epochs before stabilizing. In contrast, the LoRA models start from a much stronger initialization due to the pre-trained backbone and converge within only a few epochs.
 
-Figure~\ref{fig:ppl_test} underscores that while individual steps of the low-rank adapter are wall-clock slower (resulting from backpropagating gradients through the large frozen backbone), the total computational budget is heavily reduced since the network completely avoids the prolonged warming and learning cycles required when training from scratch. The configuration with $\alpha=16$ was aborted early as its dev tracking proved less stable than the balanced $\alpha=8$ run.
+Although each optimization step of LoRA requires passing through the full GPT2 backbone, the overall training process is considerably shorter because the model converges much more quickly than the scratch-trained alternatives. The configuration with $\alpha=16$ was stopped early because my GPU ran out of memory.

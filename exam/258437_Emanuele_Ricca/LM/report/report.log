@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.2)  3 JUN 2026 19:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.2)  3 JUN 2026 21:06
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -433,29 +433,16 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 4.
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ))
-(./sections/implementation_1.tex
-Underfull \hbox (badness 1565) in paragraph at lines 6--1
-[]\OT1/ptm/m/n/9 We then con-trast this resource-intensive setup against
- []
-
-
-Underfull \hbox (badness 1194) in paragraph at lines 6--7
-[]\OT1/ptm/m/n/9 For parameter-efficient fine-tuning, LoRA adapters [1]
- []
-
-) (./sections/results_1.tex [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.ma
-p}{/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc}
+(./sections/implementation_1.tex) (./sections/results_1.tex [1{/var/lib/texmf/f
+onts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf-dist/fonts/enc/dvips/base/8
+r.enc}
 
 
 
 ]
-
-LaTeX Warning: Reference `fig:unified_curves' on page 2 undefined on input line
- 48.
-
 Package svg Info: Last page of `./svg-inkscape/loss_train_1a_1b_svg-tex.pdf' is
- 1 on input line 54.
-(./svg-inkscape/loss_train_1a_1b_svg-tex.pdf_tex
+ 1 on input line 76.
+ (./svg-inkscape/loss_train_1a_1b_svg-tex.pdf_tex
 <./svg-inkscape/loss_train_1a_1b_svg-tex.pdf, id=21, page=1, 498.72481pt x 317.
 42996pt>
 File: ./svg-inkscape/loss_train_1a_1b_svg-tex.pdf Graphic file (type pdf)
@@ -465,7 +452,7 @@ ed on input line 56.
 (pdftex.def)             Requested size: 200.3085pt x 127.49283pt.
 )
 Package svg Info: Last page of `./svg-inkscape/ppl_dev_1a_1b_svg-tex.pdf' is 1 
-on input line 61.
+on input line 85.
 
 (./svg-inkscape/ppl_dev_1a_1b_svg-tex.pdf_tex
 <./svg-inkscape/ppl_dev_1a_1b_svg-tex.pdf, id=23, page=1, 498.69249pt x 317.227
@@ -475,11 +462,7 @@ File: ./svg-inkscape/ppl_dev_1a_1b_svg-tex.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./svg-inkscape/ppl_dev_1a_1b_svg-tex.pdf , page1 used 
 on input line 56.
 (pdftex.def)             Requested size: 200.3085pt x 127.4164pt.
-)
-
-LaTeX Warning: Reference `fig:ppl_test' on page 2 undefined on input line 70.
-
-) (./report.bbl
+)) (./report.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 15--18
 []\OT1/ptm/m/n/8 Mitchell P Mar-cus, Beat-rice San-torini, and Mary Ann
  []
@@ -500,19 +483,15 @@ nclusion: multiple pdfs with page group included in a single page
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
  ) 
 Here is how much of TeX's memory you used:
  7623 strings out of 469515
- 136471 string characters out of 5470808
- 569870 words of memory out of 5000000
+ 136474 string characters out of 5470808
+ 569892 words of memory out of 5000000
  36075 multiletter control sequences out of 15000+600000
  651522 words of font info for 87 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 94i,14n,93p,1099b,667s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 94i,14n,93p,1083b,665s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-dist/fonts
 /type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/am
@@ -522,7 +501,7 @@ pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share
 st/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/ti
 mes/utmb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/sh
 are/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (2 pages, 259601 bytes).
+Output written on report.pdf (2 pages, 259746 bytes).
 PDF statistics:
  267 PDF objects out of 1000 (max. 8388607)
  172 compressed objects within 2 object streams
