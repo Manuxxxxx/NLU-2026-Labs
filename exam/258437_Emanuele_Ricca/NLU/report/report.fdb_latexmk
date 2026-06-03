@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex report"] 1780510686.01437 "report.aux" "report.bbl" "report" 1780510687.16301 0
+["bibtex report"] 0 "report.aux" "report.bbl" "report" 0 -1
   "./mybib.bib" 1780507915.89099 2198 911a3e45fb9d2c89fb8d7a4eb55b82f2 ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1775415801 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "report.aux" 1780510686.98728 2058 5e60b94bf154c676502ca6812dea2bfc "pdflatex"
+  "report.aux" 1780511807.89152 2715 116d8b6635c6729a1af23a87fbc4a341 "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
   (rewritten before read)
-["pdflatex"] 1780510686.06069 "/home/emanuele/Documenti/Magistrale/NLU-2026-Labs/exam/258437_Emanuele_Ricca/NLU/report/report.tex" "report.pdf" "report" 1780510687.1632 0
+["pdflatex"] 1780511806.81544 "/home/emanuele/Documenti/Magistrale/NLU-2026-Labs/exam/258437_Emanuele_Ricca/NLU/report/report.tex" "report.pdf" "report" 1780511808.08837 2
   "/home/emanuele/Documenti/Magistrale/NLU-2026-Labs/exam/258437_Emanuele_Ricca/NLU/report/report.tex" 1780507415.86795 732 af6b11adb8041eb35be0b1b72d5c8adc ""
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1775415801 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1775415801 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -123,12 +123,16 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1780420916 325445 e037c2d0d08ad8cbac81cfa7969967b5 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1780420912 2328184 cf1f641e3d7fdecbdee73c7b59d0f121 ""
   "INTERSPEECH2021.sty" 1780407979.00238 7741 de92774b35e8e31656f894f4ddd83125 ""
-  "report.aux" 1780510686.98728 2058 5e60b94bf154c676502ca6812dea2bfc "pdflatex"
-  "report.bbl" 1780510686.05427 604 43a86339ba28b0cd25ae2bdcf42c646a "bibtex report"
+  "images/intent_acc_test_2a_2b.svg" 1780511095.04209 81672 8af6ff065e2014b245374bbdd374e5e6 ""
+  "images/loss_dev_2a_2b.svg" 1780511095.04351 45223 d16c8078589bd6c499760c8a6a92ab01 ""
+  "images/loss_train_2a_2b.svg" 1780511095.04687 92827 184740e11bb239db858aef02435b65da ""
+  "images/slot_f1_test_2a_2b.svg" 1780511095.05333 77555 05069fdbbd129ed411f0d28175abdb4f ""
+  "report.aux" 1780511807.89152 2715 116d8b6635c6729a1af23a87fbc4a341 "pdflatex"
+  "report.bbl" 1780511683.88541 604 43a86339ba28b0cd25ae2bdcf42c646a "bibtex report"
   "report.tex" 1780507415.86795 732 af6b11adb8041eb35be0b1b72d5c8adc ""
   "sections/implementation_2.tex" 1780509091.41329 1535 a2a826700c7ba274302b3fff944e4d31 ""
   "sections/introduction_2.tex" 1780509085.72131 1198 c2ff5e3896327148e6432098f31ddf79 ""
-  "sections/results_2.tex" 1780510684.04626 5027 2eec2625b663132a2331fa6a7304f1b4 ""
+  "sections/results_2.tex" 1780511805.09592 7460 b6935d7376a78bd0d61dfbd6711aeba6 ""
   (generated)
   "report.aux"
   "report.log"

@@ -11,7 +11,12 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # TensorBoard Metric Tag Configuration
 LINE_METRICS = {
     'loss_train': 'loss/train',
-    'ppl_dev': 'ppl/dev'
+    'loss_dev': 'loss/dev',
+    'ppl_dev': 'ppl/dev',
+    'intent_acc_dev': 'intent_acc/dev',
+    'intent_acc_test': 'intent_acc/test',
+    'slot_f1_dev': 'slot_f1/dev',
+    'slot_f1_test': 'slot_f1/test'
 }
 BAR_METRIC_TAG = 'ppl/test'
 
@@ -25,8 +30,20 @@ SUFFIX_MAP = {
     "2A_plus_2B": "_2a_2b"
 }
 
+# Explicitly defining exactly 8 runs to keep for part 2A
+ALLOWED_2A_KEYS = {
+    "Baseline",
+    "Bigger_d_model",
+    "Bigger_d_model_2",
+    "More_heads+Bigger_d",
+    "More_layers_2+Bigger_d",
+    "More_layers+Bigger_d",
+    "More_layers_2+More_heads+Bigger_d",
+    "Dropout0.1_+_More_layers_2+More_heads+Bigger_d_2"
+}
+
 def clean_label(run_name):
-    # Dictionary tracking unique substrings from your 1A folders to their clean LaTeX names
+    # --- PART 1A MAPPINGS ---
     mapping_1A = {
         "1A_20260514_174737_Baseline": "Baseline Layout",
         "1A_20260514_185306_Bigger_d_model": r"+ Bigger $d_{\text{model}}$ (32, $ff_{\text{dim}}=64$)",
@@ -42,12 +59,41 @@ def clean_label(run_name):
         "213348_wt_+_ff_dropout_0.1": r"+ WT + FF Drop 0.1 ($lr=0.005$)"
     }
     
+    # --- PART 2A MAPPINGS ---
+    mapping_2A = {
+        "Baseline": r"Baseline ($d_{\text{model}}\!=\!20$)",
+        "Bigger_d_model": r"+ Capacity Scale Up ($d_{\text{model}}\!=\!64$)",
+        "Bigger_d_model_2": r"+ Full Capacity Scaling ($d_{\text{model}}\!=\!128$)",
+        "More_heads+Bigger_d": r"+ Multi-Head Expansion ($H\!=\!2, d_{\text{model}}\!=\!128$)",
+        "More_layers_2+Bigger_d": r"+ Deep Layer Stacking Expansion ($L\!=\!4, d_{\text{model}}\!=\!64$)",
+        "More_layers+Bigger_d": r"+ Depth Scaling Layer Setup ($L\!=\!2, d_{\text{model}}\!=\!64$)",
+        "More_layers_2+More_heads+Bigger_d": r"+ Deep Multi-Head Scale Up ($L\!=\!4, H\!=\!2$)",
+        "Dropout0.1_+_More_layers_2+More_heads+Bigger_d_2": r"+ Deep Regularized Layout ($\text{Drop}_{\text{out}}\!=\!0.1$)"
+    }
+
+    # --- PART 2B MAPPINGS ---
+    mapping_2B = {
+        "2B_20260507_174532_GPT2-small": "GPT2-small Baseline",
+        "2B_20260602_115853_GPT2": "GPT2 Fine-Tuned",
+        "2B_20260507_152056_BERT-base": "BERT-base-uncased (Run 1)",
+        "2B_20260507_174032_BERT-base": "BERT-base-uncased (Run 2)"
+    }
+
     if run_name.startswith("1A_"):
         for key, target_label in mapping_1A.items():
             if key in run_name:
                 return target_label
+
+    if run_name.startswith("2A_"):
+        clean_key = re.sub(r'^2A_\d{8}_\d{6}_', '', run_name)
+        if clean_key in mapping_2A:
+            return mapping_2A[clean_key]
+
+    if run_name.startswith("2B_"):
+        for key, target_label in mapping_2B.items():
+            if key in run_name:
+                return target_label
                 
-    # Fallback for 1B, 2A, 2B
     match = re.search(r'\d{8}_\d{6}_(.+)$', run_name)
     if match:
         return match.group(1).replace('_', ' ')
@@ -62,7 +108,6 @@ print(f"Found {len(csv_files)} configurations to plot.\n")
 for csv_file in csv_files:
     config_name = csv_file.replace("export_", "").replace(".csv", "")
     
-    # Get the file suffix (e.g., '_1a_1b'), skip if the config name isn't recognized
     suffix = SUFFIX_MAP.get(config_name)
     if not suffix:
         continue
@@ -75,26 +120,47 @@ for csv_file in csv_files:
         
     print(f"Processing Group: [{config_name}] -> Suffix: {suffix}")
     
-    # ==========================================
-    # 1. GENERATE LINE PLOTS (Train Loss & Dev PPL)
-    # ==========================================
+    # ==================================================
+    # 1. GENERATE LINE PLOTS
+    # ==================================================
     for base_name, board_tag in LINE_METRICS.items():
         metric_df = df[df['Metric'] == board_tag]
         if metric_df.empty:
             continue
             
         plt.figure(figsize=(7, 4.5))
-        for run_name in metric_df['Run'].unique():
-            run_df = metric_df[metric_df['Run'] == run_name].sort_values(by='Step')
-            plt.plot(run_df['Step'], run_df['Value'], label=clean_label(run_name), linewidth=1.5)
+        has_data = False
         
+        for run_name in metric_df['Run'].unique():
+            if run_name.startswith("2A_"):
+                clean_key = re.sub(r'^2A_\d{8}_\d{6}_', '', run_name)
+                if clean_key not in ALLOWED_2A_KEYS:
+                    continue
+            
+            run_df = metric_df[metric_df['Run'] == run_name].sort_values(by='Step')
+            plt.plot(run_df['Step'], run_df['Value'], label=clean_label(run_name), linewidth=1.3)
+            has_data = True
+        
+        if not has_data:
+            plt.close()
+            continue
+            
         plt.xlabel('Steps', fontsize=11, fontweight='semibold')
-        plt.ylabel('Loss' if 'loss' in base_name else 'Perplexity (PPL)', fontsize=11, fontweight='semibold')
-        plt.grid(True, linestyle='--', alpha=0.6)
-        plt.legend(loc='best', fontsize=9, framealpha=0.9)
+        
+        if 'loss' in base_name:
+            plt.ylabel('Cross-Entropy Loss', fontsize=11, fontweight='semibold')
+        elif 'ppl' in base_name:
+            plt.ylabel('Perplexity (PPL)', fontsize=11, fontweight='semibold')
+        elif 'intent' in base_name:
+            plt.ylabel('Intent Accuracy Score', fontsize=11, fontweight='semibold')
+        elif 'slot' in base_name:
+            plt.ylabel('Slot Level F1 Score', fontsize=11, fontweight='semibold')
+            
+        plt.grid(True, linestyle='--', alpha=0.5)
+        # Tight, non-intrusive legend settings
+        plt.legend(loc='best', fontsize=7.5, framealpha=0.85, labelspacing=0.25, handletextpad=0.35)
         plt.tight_layout()
         
-        # Saves as flat file like: loss_train_1a_1b.svg
         target_path = os.path.join(OUTPUT_DIR, f"{base_name}{suffix}.svg")
         plt.savefig(target_path, format='svg', bbox_inches='tight')
         plt.close()
@@ -107,6 +173,11 @@ for csv_file in csv_files:
     if not test_df.empty:
         final_scores = []
         for run_name in test_df['Run'].unique():
+            if run_name.startswith("2A_"):
+                clean_key = re.sub(r'^2A_\d{8}_\d{6}_', '', run_name)
+                if clean_key not in ALLOWED_2A_KEYS:
+                    continue
+                    
             run_data = test_df[test_df['Run'] == run_name].sort_values(by='Step')
             final_val = run_data['Value'].iloc[-1]
             final_scores.append({
@@ -114,30 +185,30 @@ for csv_file in csv_files:
                 'Value': final_val
             })
         
-        bar_df = pd.DataFrame(final_scores).sort_values(by='Value', ascending=False)
-        
-        plt.figure(figsize=(7, max(3, len(bar_df) * 0.45)))
-        bars = plt.barh(bar_df['CleanRun'], bar_df['Value'], color='#2b5c8f', edgecolor='black', height=0.6)
-        
-        plt.xlabel('Final Test Perplexity (Lower is Better)', fontsize=11, fontweight='semibold')
-        plt.grid(axis='x', linestyle='--', alpha=0.6)
-        
-        for bar in bars:
-            width = bar.get_width()
-            plt.text(width + (width * 0.01), 
-                     bar.get_y() + bar.get_height()/2, 
-                     f'{width:.2f}', 
-                     va='center', ha='left', fontsize=9, fontweight='semibold')
-                     
-        plt.xlim(0, max(bar_df['Value']) * 1.15)
-        plt.tight_layout()
-        
-        # Saves as flat file like: ppl_test_1a_1b.svg
-        target_path = os.path.join(OUTPUT_DIR, f"ppl_test{suffix}.svg")
-        plt.savefig(target_path, format='svg', bbox_inches='tight')
-        plt.close()
-        print(f" 📊 Saved bar chart: {target_path}")
+        if final_scores:
+            bar_df = pd.DataFrame(final_scores).sort_values(by='Value', ascending=False)
+            
+            plt.figure(figsize=(7, max(3, len(bar_df) * 0.42)))
+            bars = plt.barh(bar_df['CleanRun'], bar_df['Value'], color='#2b5c8f', edgecolor='black', height=0.55)
+            
+            plt.xlabel('Final Test Perplexity (Lower is Better)', fontsize=11, fontweight='semibold')
+            plt.grid(axis='x', linestyle='--', alpha=0.5)
+            
+            for bar in bars:
+                width = bar.get_width()
+                plt.text(width + (width * 0.01), 
+                         bar.get_y() + bar.get_height()/2, 
+                         f'{width:.2f}', 
+                         va='center', ha='left', fontsize=8.5, fontweight='semibold')
+                         
+            plt.xlim(0, max(bar_df['Value']) * 1.15)
+            plt.tight_layout()
+            
+            target_path = os.path.join(OUTPUT_DIR, f"ppl_test{suffix}.svg")
+            plt.savefig(target_path, format='svg', bbox_inches='tight')
+            plt.close()
+            print(f" 📊 Saved bar chart: {target_path}")
         
     print()
 
-print("✨ Done! All configuration files exported to a flat directory.")
+print("✨ Done! Script optimized for exactly 8 configuration traces.")

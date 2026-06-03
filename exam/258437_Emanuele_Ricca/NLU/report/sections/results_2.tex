@@ -43,25 +43,52 @@ BERT-base-uncased Architecture (Run 2) & \textbf{0.9765} & \textbf{0.9332} \\ \h
 \end{tabular}
 \end{table}
 
-Fine-tuning pre-trained foundation backbones significantly outperforms all models built from scratch. The basic trial using \texttt{GPT2-small} outpaces the custom networks within 3 epochs. Fully fine-tuning the base \texttt{GPT2} network increases performance to 0.9586 Intent Accuracy and an 0.8949 Slot F1 score. 
+Fine-tuning pre-trained foundation backbones significantly outperforms all models built from scratch[cite: 2, 5, 8, 11]. The basic trial using \texttt{GPT2-small} outpaces the custom networks within 3 epochs[cite: 8]. Fully fine-tuning the base \texttt{GPT2} network increases performance to 0.9586 Intent Accuracy and an 0.8949 Slot F1 score[cite: 11, 12]. 
 
-The bidirectional \texttt{BERT-base-uncased} model records the highest overall metrics, achieving a peak Intent Accuracy of 0.9765 and an optimal Slot F1 of 0.9332. BERT consistently outpaces GPT2 on both targets. This variance is strictly structural: BERT’s unconstrained bidirectional attention mask extracts context from both sequence directions simultaneously, matching sequence-tagging token dynamics. In contrast, GPT2 is bounded by causal left-to-right attention fields that prevent downstream token representations from informing earlier sequence slot states.
+The bidirectional \texttt{BERT-base-uncased} model records the highest overall metrics, achieving a peak Intent Accuracy of 0.9765 and an optimal Slot F1 of 0.9332[cite: 5, 6]. BERT consistently outpaces GPT2 on both targets[cite: 2, 5, 8, 11]. This variance is strictly structural: BERT’s unconstrained bidirectional attention mask extracts context from both sequence directions simultaneously, matching sequence-tagging token dynamics. In contrast, GPT2 is bounded by causal left-to-right attention fields that prevent downstream token representations from informing earlier sequence slot states.
 
-\begin{figure}[H]
+% --- FIRST PLOT CONTAINER (INTENT & SLOT METRICS ACROSS BOTH SYSTEMS) ---
+% Fits perfectly at the bottom of the left column
+\begin{figure}[h]
 \centering
 \begin{subfigure}{\columnwidth}
   \centering
-  \framebox[0.9\columnwidth]{\parbox{0.85\columnwidth}{\centering \vskip 6mm [Image Placeholder: learning\_curves\_2a.pdf] \vskip 6mm}}
-  \caption{Scratch Convergence Profile (Intent vs. Slot)}
-  \label{fig:curves_2a}
+  \includesvg[width=0.88\columnwidth]{images/intent_acc_test_2a_2b}
+  \caption{Multi-Task Intent Accuracy Evaluation Profile (Combined Test Set)}
+  \label{fig:intent_acc_2a_2b}
 \end{subfigure} \\
-\vspace{2mm}
+\vspace{3mm}
 \begin{subfigure}{\columnwidth}
   \centering
-  \framebox[0.9\columnwidth]{\parbox{0.85\columnwidth}{\centering \vskip 6mm [Image Placeholder: convergence\_transfer\_2b.pdf] \vskip 6mm}}
-  \caption{Pre-trained Multi-Task Loss Track}
-  \label{fig:curves_2b}
+  \includesvg[width=0.88\columnwidth]{images/slot_f1_test_2a_2b}
+  \caption{Multi-Task Slot F1 Sequence Tagging Evaluation Profile (Combined Test Set)}
+  \label{fig:slot_f1_2a_2b}
 \end{subfigure}
-\caption{Multi-task metric tracking. Plot (a) logs the volatile sentence accuracy tracking against the steady, smooth slot F1 validation curve. Plot (b) illustrates the rapid, sample-efficient optimization profiles of fine-tuned pre-trained models.}
-\label{fig:multi_task_plots}
+\caption{Comparative performance metrics between custom models built from scratch and pre-trained backbone transformers, illustrating intent classification trajectories (a) and sequence-tagging token F1 accuracy gains (b).}
+\label{fig:scratch_vs_pretrained_metrics}
 \end{figure}
+
+As displayed in the comparative tracking of Figure \ref{fig:scratch_vs_pretrained_metrics}, plotting scratch models directly alongside pre-trained configurations visually maps the paradigm shift enabled by transfer learning. In Figure \ref{fig:intent_acc_2a_2b}, the fine-tuned systems bypass the initial training convergence cycles entirely, initializing immediately at an accuracy baseline that outperforms custom scratch networks even after thousands of optimization updates. This divergence is reinforced by token-level sequence evaluations in Figure \ref{fig:slot_f1_2a_2b}. The pre-trained context representations allow \texttt{BERT-base} to establish a clear, dominant upper bound on slot detection, reaching stable tracking milestones that scratch configurations cannot emulate due to overfitting layout limitations.
+
+% --- SECOND PLOT CONTAINER (CONVERGENCE & REGULARIZATION COEFFICIENTS) ---
+% Flows perfectly over into the right column
+\begin{figure}[h]
+\centering
+\begin{subfigure}{\columnwidth}
+  \centering
+  \includesvg[width=0.88\columnwidth]{images/loss_train_2a_2b}
+  \caption{Cross-Entropy Convergence Profile (Combined Training Track)}
+  \label{fig:loss_train_2a_2b}
+\end{subfigure} \\
+\vspace{3mm}
+\begin{subfigure}{\columnwidth}
+  \centering
+  \includesvg[width=0.88\columnwidth]{images/loss_dev_2a_2b}
+  \caption{Cross-Entropy Generalization Profile (Combined Validation Track)}
+  \label{fig:loss_dev_2a_2b}
+\end{subfigure}
+\caption{Joint optimization loss fields mapping global objective behaviors across configurations, revealing the rapid stabilization paths of fine-tuned backbones relative to scratch layouts on both training fields (a) and validation splits (b).}
+\label{fig:cross_entropy_comparisons}
+\end{figure}
+
+The foundational optimization advantages are further detailed in Figure \ref{fig:cross_entropy_comparisons}. Figures \ref{fig:loss_train_2a_2b} and \ref{fig:loss_dev_2a_2b} compare the multi-task cross-entropy loss reductions for both train and dev splits across all systems. Custom models built from scratch require long gradient step updates to map semantic sequence structures. Conversely, pre-trained parameters utilize high-density linguistic representations to immediately minimize tracking objectives, stabilizing loss functions within a compact optimization window.
