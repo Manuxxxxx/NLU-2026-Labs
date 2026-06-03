@@ -314,7 +314,7 @@ def main() -> None:
 
     workspace = args.workspace.resolve()
     runs_root = workspace / "runs"
-    output_dir = args.output_dir or (workspace / "report" / "tables")
+    output_dir = args.output_dir or (workspace / "tables")
     output_dir = output_dir.resolve()
 
     run_dirs = discover_run_dirs(runs_root, args.family)
