@@ -1,0 +1,6 @@
+\section{Introduction}
+\label{sec:introduction_2}
+
+This study investigates joint multi-task learning (MTL) architectures optimized to simultaneously process sentence-level classification and token-level sequence tracking over the Air Travel Information System (ATIS) dataset \cite{radford2019language}. The framework addresses concurrent intent classification and slot filling using a unified parameter space. 
+
+We analyze two modeling paradigms. First, starting from the baseline architecture provided for this course, we evaluate how systematic incremental capacity modifications—specifically expanding hidden model dimensions, attention block depth, head counts, and adding targeted output dropout regularization—impact multi-task convergence. Second, we contrast these variants against full parameter fine-tuning of pre-trained foundation networks, comparing a bidirectional encoder framework (\texttt{BERT-base-uncased}) with an autoregressive causal decoder system (\texttt{GPT2}) \cite{devlin2019bert, radford2019language} under identical optimization conditions. Generative AI tools were utilized strictly to assist with scripting logic verification, debugging, and document formatting.

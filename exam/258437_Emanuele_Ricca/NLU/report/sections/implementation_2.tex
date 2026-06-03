@@ -1,0 +1,10 @@
+\section{Implementation Details}
+\label{sec:implementation_2}
+
+The multi-task framework routes a shared contextual representation matrix $H \in \mathbb{R}^{B \times L \times d_{\text{model}}}$ into independent task classification heads. Token sequence tagging projects individual token hidden states $H_i$ across slot vocabulary dimensions. Sentence intent classification pooling depends on the underlying backbone: the custom model and BERT extract features from the primary classification token ($\mathbf{h}_{\text{[CLS]}} = H[:, 0]$) \cite{devlin2019bert}, while the autoregressive GPT2 indexes the final non-padded sequence token using active attention mask boundaries ($\mathbf{h}_{\text{final}} = H[B, \sum(\text{mask})-1]$) to respect causal constraints. 
+
+The training objective optimizes an unweighted joint cross-entropy loss function without manual balancing scaling coefficients:
+\begin{equation}
+    \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{intent}} + \mathcal{L}_{\text{slot}}
+\end{equation}
+To handle sub-tokenization discrepancies introduced by WordPiece and Byte-Pair Encoding, we implement an index masking schema. Ground-truth slot tags are mapped exclusively to the first sub-token of each word. All subsequent child sub-tokens and padding steps are assigned an active ignore index (\texttt{SLOT\_IGNORE\_INDEX} $\to -100$), skipping loss and gradient computations. All variants are optimized via AdamW \cite{loshchilov2017decoupled} with linear learning rate warmup and an early-stopping patience threshold.

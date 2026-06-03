@@ -1,0 +1,67 @@
+\section{Results and Evaluation}
+\label{sec:results_2}
+
+Models are evaluated on the ATIS dataset using sentence-level Intent Classification Accuracy and CoNLL-style token-level Slot F1 metrics. Table \ref{tab:2a_results} presents the empirical scaling metrics across the selected 8 representative design configurations evaluated from scratch, while Table \ref{tab:2b_results} details the pre-trained transfer fine-tuning benchmarks.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Incremental optimization results for Part 2.A (From Scratch).}
+\label{tab:2a_results}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcc}
+\hline
+\textbf{Incremental Modification Variant} & \textbf{Intent Acc.} & \textbf{Slot F1} \\ \hline
+Provided Baseline ($d_{\text{model}}\!=\!20, L\!=\!1, H\!=\!1, \text{FF}_{\text{dim}}\!=\!20$) & 0.8847 & 0.8093 \\
++ Capacity Scale Up ($d_{\text{model}}\!=\!64, \text{FF}_{\text{dim}}\!=\!128$) & 0.9250 & 0.8834 \\
++ Full Capacity Scaling ($d_{\text{model}}\!=\!128, \text{FF}_{\text{dim}}\!=\!192$) & 0.9317 & 0.8839 \\
++ Multi-Head Expansion ($H\!=\!2, d_{\text{model}}\!=\!128$) & 0.9183 & 0.8721 \\
++ Deep Layer Stacking Expansion ($L\!=\!4, d_{\text{model}}\!=\!64$) & 0.9037 & 0.8674 \\
++ Depth Scaling Layer Setup ($L\!=\!2, d_{\text{model}}\!=\!64$) & 0.9272 & 0.8714 \\
++ Deep Multi-Head Scale Up ($L\!=\!4, H\!=\!2, d_{\text{model}}\!=\!64$) & 0.9306 & 0.8884 \\
++ Deep Regularized Layout ($\text{Dropout}_{\text{out}}\!=\!0.1, L\!=\!4, H\!=\!2, d_{\text{model}}\!=\!128$) & \textbf{0.9395} & \textbf{0.8906} \\ \hline
+\end{tabular}
+}
+\end{table}
+
+The course baseline yields an Intent Accuracy of 0.8847 and a Slot F1 score of 0.8093. Expanding the basic hidden dimensions directly to an intermediate ($d_{\text{model}}=64$) and higher-tier capacity ($d_{\text{model}}=128, \text{FF}_{\text{dim}}=192$) drives immediate improvements, yielding a clean score bump across both prediction tasks. This underscores that raw hidden layer width represents the primary driver of joint multi-task tracking stability.
+
+Conversely, changing specialized parameters in isolation yields fluctuating outcomes. Moving block depth to $L=4$ or multi-head tracking counts to $H=2$ in isolation causes metrics to drop slightly due to overfitting configurations on the compact sample layout of the ATIS data splits. Introducing an intermediate balanced depth layout ($L=2, d_{\text{model}}=64$) improves performance compared to isolated deeper frameworks, demonstrating that parameter balance is essential. Integrating an optimized 0.1 output dropout layer on top of the heavily parameterized deep-scaled model balances the parameter tracking, achieving peak scratch performance at 0.9395 Intent Accuracy and 0.8906 Slot F1.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Multi-task transfer fine-tuning results for Part 2.B.}
+\label{tab:2b_results}
+\begin{tabular}{lcc}
+\hline
+\textbf{Pre-trained Backbone Model} & \textbf{Intent Acc.} & \textbf{Slot F1} \\ \hline
+GPT2-small Initial Trial Configuration & 0.9474 & 0.8822 \\
+GPT2 Fully Fine-Tuned Setup & 0.9586 & 0.8949 \\
+BERT-base-uncased Architecture (Run 1) & 0.9653 & 0.9307 \\
+BERT-base-uncased Architecture (Run 2) & \textbf{0.9765} & \textbf{0.9332} \\ \hline
+\end{tabular}
+\end{table}
+
+Fine-tuning pre-trained foundation backbones significantly outperforms all models built from scratch. The basic trial using \texttt{GPT2-small} outpaces the custom networks within 3 epochs. Fully fine-tuning the base \texttt{GPT2} network increases performance to 0.9586 Intent Accuracy and an 0.8949 Slot F1 score. 
+
+The bidirectional \texttt{BERT-base-uncased} model records the highest overall metrics, achieving a peak Intent Accuracy of 0.9765 and an optimal Slot F1 of 0.9332. BERT consistently outpaces GPT2 on both targets. This variance is strictly structural: BERT’s unconstrained bidirectional attention mask extracts context from both sequence directions simultaneously, matching sequence-tagging token dynamics. In contrast, GPT2 is bounded by causal left-to-right attention fields that prevent downstream token representations from informing earlier sequence slot states.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{\columnwidth}
+  \centering
+  \framebox[0.9\columnwidth]{\parbox{0.85\columnwidth}{\centering \vskip 6mm [Image Placeholder: learning\_curves\_2a.pdf] \vskip 6mm}}
+  \caption{Scratch Convergence Profile (Intent vs. Slot)}
+  \label{fig:curves_2a}
+\end{subfigure} \\
+\vspace{2mm}
+\begin{subfigure}{\columnwidth}
+  \centering
+  \framebox[0.9\columnwidth]{\parbox{0.85\columnwidth}{\centering \vskip 6mm [Image Placeholder: convergence\_transfer\_2b.pdf] \vskip 6mm}}
+  \caption{Pre-trained Multi-Task Loss Track}
+  \label{fig:curves_2b}
+\end{subfigure}
+\caption{Multi-task metric tracking. Plot (a) logs the volatile sentence accuracy tracking against the steady, smooth slot F1 validation curve. Plot (b) illustrates the rapid, sample-efficient optimization profiles of fine-tuned pre-trained models.}
+\label{fig:multi_task_plots}
+\end{figure}

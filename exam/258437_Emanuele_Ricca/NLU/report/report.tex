@@ -1,9 +1,13 @@
 \documentclass[a4paper]{article}
 
 \usepackage{INTERSPEECH2021}
+\usepackage{float}        % Fixes: Unknown float option [H]
+\usepackage{subcaption}   % Fixes: Undefined control sequence \subfigure
+\usepackage{svg}          % Fixes: Unknown graphics extension .svg
+\usepackage{cite}         % <-- ADD THIS LINE TO FIX BIBTEX
 
 % Put the lab number of the corresponding exercise
-\csname title\endcsname{NLU course project - Part 2A and Part 2B}
+\title{NLU course project - Part 2A and Part 2B}
 \name{Emanuele Ricca (258437)}
 
 \address{
@@ -14,10 +18,13 @@
 
 \maketitle
 
-\input{sections/part2a}
-\input{sections/part2b}
 
-\bibliographystyle{IEEEtran}
+\input{sections/introduction_2.tex}
+\input{sections/implementation_2.tex}
+\input{sections/results_2.tex}
+
+
+\bibliographystyle{plain}
 \bibliography{mybib}
 
 \end{document}
