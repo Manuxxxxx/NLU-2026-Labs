@@ -1,8 +1,0 @@
-\section{Introduction}
-\label{sec:introduction_2}
-
-This report investigates joint multi-task learning for intent classification and slot filling on the Air Travel Information System (ATIS) dataset. The objective is to evaluate how architectural modifications and transfer learning affect performance on both tasks within a shared model.
-
-The first part focuses on improving the baseline architecture provided for the course through incremental modifications. Model capacity is progressively increased by adjusting hidden dimensions, attention heads, layer depth, and feed-forward dimensions. In addition, dropout regularization is introduced and evaluated to determine its effect on generalization.
-
-The second part compares these models against fine-tuned pre-trained transformers. Both \texttt{GPT2} and \texttt{BERT-base-uncased} are adapted to the joint intent classification and slot filling setting. Particular attention is given to handling sub-tokenization during slot prediction and to the different strategies required for intent classification in encoder-only and decoder-only architectures. Generative AI tools were used only for debugging support, code verification, and document formatting.
