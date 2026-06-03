@@ -1,0 +1,32 @@
+## Part 2.A
+As for the first part of the project (LM), you have to apply modifications incrementally. Also in this case you may have to play with the hyperparameters and optimizers to improve the performance. 
+
+Modify the baseline architecture GPT2:
+
+0. Baseline: find a suitable learning rate, but keep the other hyperparameters fixed.
+1. Hyperparameter optimization: incrementally change hyperparameters one at a time (```d_model```, ```n_heads```, ```num_layers```, ```ff_dim```). You may have to readjust the learning rate for larger model sizes.
+2. Adding a dropout layer before the final output layers
+
+**Intent classification**: accuracy <br>
+**Slot filling**: F1 score with conll
+
+***Dataset to use: ATIS***
+
+## Part 2.B
+
+Adapt the code to fine-tune a pre-trained GPT2 (decoder only) and BERT (encoder only) models using a multi-task learning setting on intent classification and slot filling. 
+
+For both models, one of the challenges of this is to **handle the sub-tokenization issue**.  You can refer to this paper to have a better understanding of how to implement this (they use BERT): https://arxiv.org/abs/1902.10909. 
+
+As the models have different architectures, you will have to perform intent classification differently. 
+
+*Note*: The fine-tuning process is to further train on a specific task/s a model that has been pre-trained on a different (potentially unrelated) task/s.
+
+
+For GPT2, you can experiment with [*GPT2* or *GPT2-medium*](https://huggingface.co/openai-community/gpt2). For BERT, you can experiment with [*BERT-base* or *BERT-large*](https://huggingface.co/google-bert/bert-base-uncased). 
+
+**Intent classification**: accuracy <br>
+**Slot filling**: F1 score with conll
+
+***Dataset to use: ATIS***
+

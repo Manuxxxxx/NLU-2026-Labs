@@ -1,10 +1,10 @@
 \section{Part 2.A -- Joint Intent and Slot Model from Scratch}
 
-\subsection*{Introduction}
+\subsection{Introduction}
 In this exercise, I adapted the Transformer architecture to a multi-task setting for the ATIS dataset. The model predicts both the intent of the utterance and the slot label for each token. I followed the same incremental strategy as in the language-model task, but now the evaluation criteria are intent accuracy and slot F1 instead of perplexity.
 
-\subsection*{Implementation details}
+\subsection{Implementation details}
 I built a custom preprocessing pipeline with a vocabulary, dataset wrapper, and collate function that pads sequences and preserves lengths for batched training. The model produces two outputs: one sequence-level intent classifier and one slot classifier over the token representations. I first tuned the baseline hyperparameters, then adjusted model width, number of heads, depth, and feed-forward size one by one. I also added dropout before the final classification layers to regularize the joint model.
 
-\subsection*{Results}
+\subsection{Results}
 The final report will summarize the best configuration for the joint model and describe how the accuracy/F1 balance changed as capacity and regularization were modified.

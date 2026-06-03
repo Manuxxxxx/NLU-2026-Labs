@@ -1,0 +1,11 @@
+\section{Implementation Details}
+
+\subsection{Part 1.A -- GPT2 from Scratch}
+The core architecture consists of token embeddings, absolute learnable position embeddings, masked causal self-attention \cite{vaswani2017attention}, and a linear language modeling head. The dimension footprint was modified from a baseline ($d_{\text{model}}=20, n_{\text{heads}}=1, num_{\text{layers}}=1, ff_{\text{dim}}=20$) up to an expanded capacity configuration ($d_{\text{model}}=64, n_{\text{heads}}=2, num_{\text{layers}}=2, ff_{\text{dim}}=128$). 
+
+Four independent dropout layers \cite{srivastava2014dropout} were mapped into specific data paths: embedding dropout, attention dropout, projection dropout, and feed-forward dropout. Weight tying \cite{press2016using} was integrated to share exact parameters between the input embedding matrix and the final linear output layer. Optimization was handled via AdamW \cite{loshchilov2017decoupled} over 20 epochs with a 3-epoch linear warmup, an early stopping patience of 3, and an adjusted learning rate scaled down from 0.01 to 0.005 for larger sizes to stabilize convergence.
+
+\subsection{Part 1.B -- LoRA Fine-Tuning}
+LoRA adapters \cite{hu2021lora} were developed manually from scratch without external PEFT libraries. Low-rank decomposition paths were explicitly mapped to modify the linear query, key, and value projection layers inside each self-attention block \cite{vaswani2017attention}. For a frozen base weight matrix $W_0 \in \mathbb{R}^{d \times k}$, the adapted forward pass is computed as: 
+$$W = W_0 + \Delta W = W_0 + \frac{\alpha}{r} B A$$
+where $A \in \mathbb{R}^{r \times k}$ and $B \in \mathbb{R}^{d \times r}$ represent the trainable low-rank matrices, $r=4$ is the inner rank bottleneck, and $\alpha \in \{8, 16\}$ is the constant scaling multiplier. All original base parameters were strictly frozen. Training utilized AdamW \cite{loshchilov2017decoupled}, a tuned learning rate of $0.0005$, and a 3-epoch linear warmup.

@@ -1,0 +1,7 @@
+\section{Introduction}
+
+\subsection{Part 1.A -- GPT2 from Scratch}
+This section presents the incremental optimization of a custom GPT2-style language model \cite{radford2019language} trained from scratch on the Penn TreeBank dataset \cite{marcus1993building}. Starting from a constrained baseline, the network capacity was expanded by adjusting hidden dimensions, attention heads, layer depth, and feed-forward dimensions. To regularize the scaled configurations, four independent dropout mechanisms \cite{srivastava2014dropout} were evaluated alongside weight-tying techniques \cite{press2016using}. Each modification was isolated to minimize validation perplexity under the mandatory threshold ($\text{PPL} < 250$). Generative AI utilities assisted with script debugging and formatting.
+
+\subsection{Part 1.B -- LoRA Fine-Tuning}
+This section evaluates Parameter-Efficient Fine-Tuning (PEFT) via a manual implementation of Low-Rank Adaptation (LoRA) \cite{hu2021lora} on a pre-trained GPT2 backbone \cite{radford2019language}. Trainable low-rank adapter bottlenecks were integrated directly into the attention projection pathways while core network weights remained completely frozen. The design goal was to satisfy the performance constraint ($\text{PPL} < 250$) while outperforming the custom scratch-built architectures optimized in Part 1.A. AI tools supported scripting logic verification and text layout formatting.

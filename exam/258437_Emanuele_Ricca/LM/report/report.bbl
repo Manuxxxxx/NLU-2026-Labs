@@ -1,0 +1,38 @@
+\begin{thebibliography}{1}
+
+\bibitem{hu2021lora}
+Edward~J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu~Wang, and Weizhu Chen.
+\newblock Lora: Low-rank adaptation of large language models.
+\newblock {\em ICLR}, 2022.
+
+\bibitem{loshchilov2017decoupled}
+Ilya Loshchilov and Frank Hutter.
+\newblock Decoupled weight decay regularization.
+\newblock {\em arXiv preprint arXiv:1711.05101}, 2017.
+
+\bibitem{marcus1993building}
+Mitchell~P Marcus, Beatrice Santorini, and Mary~Ann Marcinkiewicz.
+\newblock Building a large annotated corpus of english: The penn treebank.
+\newblock {\em Computational linguistics}, 19(2):313--330, 1993.
+
+\bibitem{press2016using}
+Ofir Press and Lior Wolf.
+\newblock Using the output embedding to improve language models.
+\newblock {\em arXiv preprint arXiv:1608.05859}, 2016.
+
+\bibitem{radford2019language}
+Alec Radford, Jeffrey Wu, Rewon Child, Dario Luan, Dario Amodei, and Ilya Sutskever.
+\newblock Language models are unsupervised multitask learners.
+\newblock 2019.
+
+\bibitem{srivastava2014dropout}
+Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov.
+\newblock Dropout: a simple way to prevent neural networks from overfitting.
+\newblock {\em The journal of machine learning research}, 15(1):1929--1958, 2014.
+
+\bibitem{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan~N Gomez, Luan Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock {\em NeurIPS}, 2017.
+
+\end{thebibliography}
