@@ -1,0 +1,42 @@
+Context:
+i have to finish a report for an exam.
+The exam is divided into 4 exercises thet contents will of the exercise will be given afterwords.
+The exercises are about training some nn models for a Natural Language Processing task.
+The professor provided the code to generate some baseline models, and expects us to experiment with some given modifications and hyperparameters.
+The exercise are divided into 2 main parts:
+- 1A & 1B (named LM)
+- 2A & 2B (named NLU)
+
+I have to write a report in LaTeX for each part with the constrains of having each being a maximum of 1 page long excluding images and graphs.
+I will provide the following things to you:
+- A file notes.txt containing some of my annotations about the experiments. (All 4 of them)
+- A file exercises1.txt/exercises2.txt containing the description of the exercises.
+- Some .csv and/or .md files containing the results of the experiments.
+- The latex template for the report, i will provide only one file for each exercise (so a total of 4)
+
+You are to write one by one the 2 reports, i will provide first the "LM" exercises, and then the "NLU" ones.
+
+Constraints for the report:
+1. Introduction (approx. 100 words)
+• a summary of what you have done
+2. Implementation details (max approx.
+200-300 words)
+Do not explain the backbone deep neural network (e.g. RNN or BERT). Instead, focus on what you did on top of it. Add
+3. Results
+Add tables and explain how you evaluated your model.
+
+Details:
+the current context of the latex are like a boiler plate, we should revise the text and remember that the professor give most of the code, only the modifications are mine, you should not talk too much about the professor given architecture.
+
+You are to leverage both my notes and the .csv and/or .md to write the results section.
+
+You are to question my notes and the results, and try to find any inconsistency or error in them, if you find any you should point it out and ask for clarification.
+
+If you find yourself questioning how i implemented some thing, you should ask for clarification.
+
+Add in the most appropriate section of both reports that i used some AI tools in my project, just a general statement that i used some AI tools.
+
+I have an issue though, i dont know of a way of sharing with you the curves of my results, i have them on tensorboard and i have downloaded svg for the report.
+You may offer solution to evaluate those as well.
+
+When in doubt ask, dont generate stuff after every prompt, confirm the doubt you have and after my confirm generate

@@ -1,7 +1,8 @@
 \begin{thebibliography}{1}
 
 \bibitem{hu2021lora}
-Edward~J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu~Wang, and Weizhu Chen.
+Edward~J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean
+  Wang, Lu~Wang, and Weizhu Chen.
 \newblock Lora: Low-rank adaptation of large language models.
 \newblock {\em ICLR}, 2022.
 
@@ -21,17 +22,21 @@ Ofir Press and Lior Wolf.
 \newblock {\em arXiv preprint arXiv:1608.05859}, 2016.
 
 \bibitem{radford2019language}
-Alec Radford, Jeffrey Wu, Rewon Child, Dario Luan, Dario Amodei, and Ilya Sutskever.
+Alec Radford, Jeffrey Wu, Rewon Child, Dario Luan, Dario Amodei, and Ilya
+  Sutskever.
 \newblock Language models are unsupervised multitask learners.
 \newblock 2019.
 
 \bibitem{srivastava2014dropout}
-Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov.
+Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan
+  Salakhutdinov.
 \newblock Dropout: a simple way to prevent neural networks from overfitting.
-\newblock {\em The journal of machine learning research}, 15(1):1929--1958, 2014.
+\newblock {\em The journal of machine learning research}, 15(1):1929--1958,
+  2014.
 
 \bibitem{vaswani2017attention}
-Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan~N Gomez, Luan Kaiser, and Illia Polosukhin.
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N Gomez, Luan Kaiser, and Illia Polosukhin.
 \newblock Attention is all you need.
 \newblock {\em NeurIPS}, 2017.
 

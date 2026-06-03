@@ -1,12 +1,10 @@
 \section{Results and Evaluation}
-
-\subsection{Part 1.A -- GPT2 from Scratch}
-Performance was measured using cross-entropy validation loss converted to Perplexity ($\text{PPL} = \exp(\text{loss})$). Table~\ref{tab:1a_results} outlines the performance metrics gathered across the incremental optimization sequence.
+Performance is evaluated via cross-entropy loss translated into Perplexity ($\text{PPL} = \exp(\text{loss})$). Table~\ref{tab:1a_results} logs the metrics gathered across the design phases of the custom scratch model, while Table~\ref{tab:1b_results} breaks down the performance profiles of the manual LoRA runs.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Incremental optimization perplexities for Part 1.A.}
+\caption{Incremental optimization perplexities for Part 1.A (From Scratch).}
 \label{tab:1a_results}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcc}
@@ -28,74 +26,45 @@ Baseline Layout ($lr=0.01$) & 56.68 & 49.51 \\
 }
 \end{table}
 
-Empirical metrics show that expanding $d_{\text{model}}$ from 20 to 32 delivered the primary boost in modeling capabilities. The model did not exhibit signs of prominent overfitting, which rendered embedding and projection dropouts \cite{srivastava2014dropout} slightly detrimental; only feed-forward dropout at 0.1 provided isolated regularization benefits. Weight tying \cite{press2016using} initially degraded perplexity due to representation constraints on a tight parameter budget, but drastically lowered parameter counts, allowing us to safely scale up the network dimensions ($d_{\text{model}}=64, ff_{\text{dim}}=128$). This final configuration yielded the lowest test PPL of 38.81.
-
-TensorBoard logs display three clear trajectory archetypes: the baseline curve shows slow convergence; scaling $d_{\text{model}}$ shifts the entire curve downward; introducing weight tying initially shifts curves upward before the scaled-up model establishes an optimized low-loss trajectory. The curves are explicitly locked in place within Figure~\ref{fig:1a_curves}.
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}{\columnwidth}
-  \centering
-  \includesvg[width=0.85\columnwidth]{images/loss_train_1A}
-  \caption{Training Loss}
-\end{subfigure} \\
-\vspace{2mm}
-\begin{subfigure}{\columnwidth}
-  \centering
-  \includesvg[width=0.85\columnwidth]{images/ppl_dev_1A.svg}
-  \caption{Development PPL}
-\end{subfigure} \\
-\vspace{2mm}
-\begin{subfigure}{\columnwidth}
-  \centering
-  \includesvg[width=0.85\columnwidth]{images/ppl_test_1A.svg}
-  \caption{Test PPL Points}
-\end{subfigure}
-\caption{TensorBoard convergence curves and evaluation metrics for Part 1.A (SVG format, locked single column layout).}
-\label{fig:1a_curves}
-\end{figure}
-
-\subsection{Part 1.B -- LoRA Fine-Tuning}
-The fine-tuned configurations evaluated on the Penn TreeBank partitions are compiled in Table~\ref{tab:1b_results}, restricted to the current section column.
-
 \begin{table}[H]
 \centering
 \small
-\caption{LoRA fine-tuning parameters and perplexity metrics.}
+\caption{LoRA fine-tuning parameters and perplexity metrics for Part 1.B.}
 \label{tab:1b_results}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \hline
-\textbf{Configuration} & \textbf{Rank} & \textbf{Alpha} & \textbf{Dev PPL} & \textbf{Test PPL} \\ \hline
+\textbf{Configuration Profile} & \textbf{Rank} & \textbf{Alpha} & \textbf{Dev PPL} & \textbf{Test PPL} \\ \hline
 LoRA Run 1* & 4 & 16 & 24.29 & N/A \\
 \textbf{LoRA Run 2 (Best)} & \textbf{4} & \textbf{8} & \textbf{23.24} & \textbf{20.99} \\ \hline
 \end{tabular}%
 }
 \end{table}
 
-The manual LoRA framework converged exceptionally fast, plateauing fully within 3 to 4 epochs. Leveraging a large pre-trained representation base \cite{radford2019language} allowed the adapter matrices to completely outperform the from-scratch models from Part 1.A, easily satisfying target requirements with a final test perplexity of 20.99 \cite{hu2021lora}.
+Empirical metrics indicate highly divergent optimization curves between the two approaches. For the models trained from scratch, expanding $d_{\text{model}}$ from 20 to 32 delivered the most significant drop in perplexity. Due to the compact nature of the corpus, severe overfitting was absent, rendering heavy embedding and projection dropouts \cite{srivastava2014dropout} counterproductive; only a mild feed-forward dropout at 0.1 provided structural regularization. Weight tying \cite{press2016using} initially harmed perplexity due to representational bottlenecks on an narrow parameter budget, but its reduction in parameter volume enabled scaling the network dimensions safely up to $d_{\text{model}}=64$ and $ff_{\text{dim}}=128$, resulting in a peak test PPL of 38.81.
 
-TensorBoard tracks highlight a unique flat convergence profile. While scratch models started with high initial perplexities and required extended training to reach the 40s, LoRA launched immediately at Epoch 1 with a dev PPL near 26, concluding at a validation PPL of 23.24. Although each individual step is wall-clock slower due to computing gradients through the frozen backbone, the rapid epoch convergence minimizes total computational budgets. The run with $\alpha=16$ was stopped early as its development metrics did not warrant test set translation. The trajectories are strictly anchored below in Figure~\ref{fig:1b_curves}.
+Conversely, the manual LoRA framework completely bypasses these initialization hurdles by adapting a powerful pre-trained representation base \cite{radford2019language}. This strategy securely met all performance objectives, achieving a vastly superior test perplexity of 20.99 \cite{hu2021lora}.
+
+To visually analyze these structural differences, Figure~\ref{fig:unified_curves} presents the synchronized TensorBoard trajectories comparing the training and validation characteristics of both implementations.
 
 \begin{figure}[H]
 \centering
 \begin{subfigure}{\columnwidth}
   \centering
-  \includesvg[width=0.85\columnwidth]{images/loss_train_1B.svg}
-  \caption{Training Loss Tracking}
+  \includesvg[width=0.88\columnwidth]{images/loss_train_1a_1b}
+  \caption{Unified Training Loss Track}
+  \label{fig:loss_train}
 \end{subfigure} \\
 \vspace{2mm}
 \begin{subfigure}{\columnwidth}
   \centering
-  \includesvg[width=0.85\columnwidth]{images/ppl_dev_1B.svg}
-  \caption{Flat Dev PPL Profile}
+  \includesvg[width=0.88\columnwidth]{images/ppl_dev_1a_1b}
+  \caption{Development Perplexity Profile}
+  \label{fig:ppl_dev}
 \end{subfigure} \\
 \vspace{2mm}
-\begin{subfigure}{\columnwidth}
-  \centering
-  \includesvg[width=0.85\columnwidth]{images/ppl_test_1B.svg}
-  \caption{Comparative Test PPL}
-\end{subfigure}
-\caption{TensorBoard trajectories demonstrating the flat optimization profile of LoRA fine-tuning (SVG format, locked single column layout).}
-\label{fig:1b_curves}
 \end{figure}
+
+As mapped in Figures \ref{fig:loss_train} and \ref{fig:ppl_dev}, the models built from scratch demonstrate a classical steep optimization curve. They begin with very high training loss and validation perplexity metrics, requiring a longer sequence of epochs to map structural English relationships. In comparison, the LoRA runs demonstrate an exceptionally flat convergence profile. Starting instantly at Epoch 1 with a development perplexity near 26, the adapters converge and plateau within 3 to 4 epochs due to the foundational features embedded in the pre-trained backbone. 
+
+Figure~\ref{fig:ppl_test} underscores that while individual steps of the low-rank adapter are wall-clock slower (resulting from backpropagating gradients through the large frozen backbone), the total computational budget is heavily reduced since the network completely avoids the prolonged warming and learning cycles required when training from scratch. The configuration with $\alpha=16$ was aborted early as its dev tracking proved less stable than the balanced $\alpha=8$ run.
