@@ -1,0 +1,120 @@
+PART 1A
+
+_____
+```
+# Mandatory Exam Exercise
+## Part 1.A
+In this, you have to modify the baseline GPT2 by adding a set of techniques that might improve the performance. In this, you have to __*add one modification at a time incrementally*__. If adding a modification decreases the performance, you can remove it and move forward with the others. However, in the report, you have to provide and comment on this unsuccessful experiment.  For each of your experiments, you have to print the performance expressed with Perplexity (PPL).
+<br>
+One of the important tasks of training a neural network is  hyperparameter optimization. Thus, you have to play with the hyperparameters to minimise the PPL and thus print the results achieved with the best configuration (in particular <b>the learning rate</b>). 
+
+**Mandatory requirements**: For the following experiments the perplexity must be below 250 (***PPL < 250***).
+
+0. Baseline: find a suitable learning rate, but keep the other hyperparameters fixed.
+1. Hyperparameter optimization: incrementally change hyperparameters one at a time (```d_model```, ```n_heads```, ```num_layers```, ```ff_dim```). You may have to readjust the learning rate for larger model sizes.
+2. Add dropout layers: --> [link](https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html). 
+    - one after obtaining the embeddings (after summing token embeddings with positional embeddings)
+    - after computing the attention weights
+    - after the output projection in ```MultiHeadAttention```
+    - after the last linear layer of the Feed Forward
+3. Add weight tying: the input embeddings (```token_embed```) and the output layer (```lm_head```) have to share the exact same weights
+```
+_____
+bigger d_model is the biggest and probably only real factor for a real increase in performances.
+Probably due to the fact that i could not train bigger models the other methods such as:
+-increasing layers
+-increasing heads
+-adding dropouts (of various kinds)
+-weight tiying 
+
+my hypothesis is that the model is still too small in order to benefit from such techniques, adding complexity but without much possible gain.
+In particular is rather clear that the model dont suffer much from overfitting so it doesnt require additional regularization.
+
+probably i should showcase dropout not really working even on different values.
+
+the only "good" results i got with dropout was with the dropout on the ffn, with a 0.1 value. 
+Even then the results are not really that much different from the bigger model.
+
+Weight tying is also not really working, probably because the model is too small to benefit from it, and it just adds more constraints without much gain in performance.
+But given that using weight tying we are reducing the number of parameters i tested out a bigger model with weight tying, in this case the results are a bit better.
+The final configuration with the best results was the one with weight tying, biggest d_model and ff_dim, also with ff_dropout to 0.1.
+---------------------------
+
+PART 1B
+
+_____
+## Part 1.B
+
+While we can train GPT2 from scratch, we may benefit from the pre-trained weights.
+However, as you might have noticed from the previous part, training large models requires a large amount of resources, and training the full-sized GPT2 (small) may require more resources than are available to us.
+
+How can we solve this? Instead of fine-tuning all parameters, we can train a small fraction of additional parameters called adapters.
+The most popular and widely used technique is Low Rank Adaptatation (LoRA), presented in [this paper](https://arxiv.org/pdf/2106.09685). 
+
+Starting from the pre-trained model from Huggingface, fine-tune GPT2 using LoRA (Low Rank Adaptation). ***You have to implement LoRA yourself manually***, libraries such as PEFT are not allowed. Complete the `GPT_LoRA` model we provide below by adding the LoRA adapters and only make these adapters trainable.
+
+- Implement LoRA and fine-tune GPT2 by training only the LoRA adapters. Apply the LoRA adapters to the query, key, and value weight matrices.
+- Experiment with the ```rank``` and ```alpha``` hyperparameters.
+
+**Mandatory requirements**: in the experiments with LoRA the perplexity must be below 250 (***PPL < 250***) and it should be lower than that achieved in Part 1.A.
+_____
+
+The LoRA adapter converges really fast 3/4 epochs max and has from epoch 1 high performances compared to the previous PART 1A results.
+The fact that is adapting a much larger and stronger model simply outdoes every little model i trained earlier.
+It this computationally slower than training a small model from scratch.
+
+---------------------------
+PART 2A
+
+_____
+## Part 2.A
+As for the first part of the project (LM), you have to apply modifications incrementally. Also in this case you may have to play with the hyperparameters and optimizers to improve the performance. 
+
+Modify the baseline architecture GPT2:
+
+0. Baseline: find a suitable learning rate, but keep the other hyperparameters fixed.
+1. Hyperparameter optimization: incrementally change hyperparameters one at a time (```d_model```, ```n_heads```, ```num_layers```, ```ff_dim```). You may have to readjust the learning rate for larger model sizes.
+2. Adding a dropout layer before the final output layers
+
+**Intent classification**: accuracy <br>
+**Slot filling**: F1 score with conll
+
+***Dataset to use: ATIS***
+_____
+
+
+The story for these experiments its pretty much the same as 1A, in this case i could test out a few different sizes of model.
+performances scales only in a significant way only based on model size. 
+Bigger model results in faster and better convergence, even though smaller model converges slower the results are still rather similar and really high still.
+This is especially easier to spot on the slot f1 graphs, which have a really clean curve compared to the more noisy intent accuracy.
+still the 2 metrics in all tests goes hand to hand in perfomances.
+
+---------------------------
+PART 2B 
+
+_____
+## Part 2.B
+
+Adapt the code to fine-tune a pre-trained GPT2 (decoder only) and BERT (encoder only) models using a multi-task learning setting on intent classification and slot filling. 
+
+For both models, one of the challenges of this is to **handle the sub-tokenization issue**.  You can refer to this paper to have a better understanding of how to implement this (they use BERT): https://arxiv.org/abs/1902.10909. 
+
+As the models have different architectures, you will have to perform intent classification differently. 
+
+*Note*: The fine-tuning process is to further train on a specific task/s a model that has been pre-trained on a different (potentially unrelated) task/s.
+
+
+For GPT2, you can experiment with [*GPT2* or *GPT2-medium*](https://huggingface.co/openai-community/gpt2). For BERT, you can experiment with [*BERT-base* or *BERT-large*](https://huggingface.co/google-bert/bert-base-uncased). 
+
+**Intent classification**: accuracy <br>
+**Slot filling**: F1 score with conll
+
+***Dataset to use: ATIS***
+_____
+
+
+Once again here the GPT2 and Bert model both outperform the smaller models, and they converge really fast.
+Here i tried first gpt2-small for testing purposes and even that model completely outperformes the models from PART 2A.
+Following i trained with gpt2 and bert-base-uncased, bert being slightly better than gpt2.
+As the 2 models work in different manner i had to choose how to use them.
+for GPT2 i used for intent tp pick the last non-pad token (last_idx = attention_mask.sum(dim=1)-1) and pass its hidden state to the intent_head.
